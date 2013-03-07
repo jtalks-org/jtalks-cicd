@@ -11,6 +11,7 @@ class LibVersion:
   def log_lib_versions(self):
     self.logger.info("python={0}", sys.version_info)
     self.__log_lib_version("requests")
+    self.__log_lib_version("GitPython")
     self.__log_lib_version("mock")
 
 

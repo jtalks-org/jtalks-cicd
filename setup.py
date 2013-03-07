@@ -8,5 +8,5 @@ setup(name='jtalks-cicd',
       author='Stanislav Bashkirtsev',
       author_email='stanislav.bashkirtsev@gmail.com',
       url='http://github.com/jtalks-org/jtalks-cicd',
-      requires=['requests', 'mock', 'MySQLdb'],
+      requires=['requests', 'mock', 'GitPython','MySQLdb'],
 )
