@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    <Environment name="EH_CACHE_CONFIG" value="file:/home/tomcat/app/tomcat-uat/conf/jcommune.ehcache.xml" type="java.lang.String" />
+    <Environment name="PROJECT1_DB_USER" value="pr1user" type="java.lang.String" />
+    <Environment name="PROJECT1_DB_PASSWORD" value="pr1pass!#$" type="java.lang.String" />
+    <Environment name="PROJECT1_DB_URL" type="java.lang.String"
+                 value="jdbc:mysql://localhost/pr1db?characterEncoding=UTF-8" />
+</Context>

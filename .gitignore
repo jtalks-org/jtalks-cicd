@@ -1,0 +1,3 @@
+*.pyc
+backups/*
+configs/local/*
