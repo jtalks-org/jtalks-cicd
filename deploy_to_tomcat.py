@@ -23,6 +23,7 @@ def main():
   settings = get_project_and_build_from_arguments()
   settings.log_settings()
   app_context = ApplicationContext(settings)
+  app_context.environment_config_grabber().grab_jtalks_configs()
   app_context.nexus().download_war(project=settings.project)
   app_context.tomcat().deploy_war()
   app_context.sanity_test().check_app_started_correctly()

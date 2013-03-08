@@ -6,6 +6,7 @@ from classes.db.DbOperations import DbOperations
 from classes.db.DbSettings import DbSettings
 from classes.parser.TomcatServerXml import TomcatServerXml
 from classes.sanity.SanityTest import SanityTest
+from classes.util.EnvironmentConfigGrabber import EnvironmentConfigGrabber
 
 __author__ = 'stanislav bashkirtsev'
 
@@ -38,6 +39,9 @@ class ApplicationContext:
                                                                  self.script_settings.project)
     db_settings = DbSettings(project=self.script_settings.project, config_file_location=config_file_location)
     return db_settings
+
+  def environment_config_grabber(self):
+    return EnvironmentConfigGrabber()
 
   def sanity_test(self):
     http_port = self.tomcat_server_xml().http_port()
