@@ -16,7 +16,7 @@ class EnvironmentConfigGrabber:
     repo.Repo.clone_from('git@jtalks.org:environments', self.CLONE_REPO_TO)
     envs = os.listdir(self.CONFIGS_LOCATION)
     for env in envs:
-      shutil.copy(self.CONFIGS_LOCATION + "/" + env, "./configs/")
+      shutil.move(self.CONFIGS_LOCATION + "/" + env, "./configs/")
 
   def __remove_previous_configs__(self):
     try:
