@@ -7,10 +7,7 @@ Additional software you'll need to install:
 -------------------------------
 Project State
 * Currently backup of tomcat & DB is ready, but recover is not implemented
-* Sanity tests are to be implemented
 * SSH information to log in to the env should be also kept in configuration
-* Configuration should be kept separately from scripts
-
 
 -------------------------------
 Both scripts in root directory (upload_to_nexus.py and deploy_to_tomcat.py) has help. Invoke them with --help key to get help message.
