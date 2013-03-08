@@ -43,12 +43,17 @@ class Tomcat:
     """
     Moves application war-file to 'webapps' Tomcat subfolder
     """
-    final_war_location = self.get_web_apps_location() + "/" + self.script_settings.get_app_final_name() + ".war"
-    self.remove_previous_war(final_war_location)
-    self.logger.info("Putting new war file to Tomcat: [{0}]", final_war_location)
-    shutil.move(self.script_settings.project + ".war", final_war_location)
+    final_app_location = self.get_web_apps_location() + "/" + self.script_settings.get_app_final_name()
+    self.remove_previous_app(final_app_location)
+    self.logger.info("Putting new war file to Tomcat: [{0}]", final_app_location)
+    shutil.move(self.script_settings.project + ".war", final_app_location + ".war")
 
-  def remove_previous_war(self, war_location):
+  def remove_previous_app(self, app_location):
+    if os.path.exists(app_location):
+      self.logger.info("Removing previous app: [{0}]", app_location)
+      shutil.rmtree(app_location)
+
+    war_location = app_location + ".war"
     if os.path.exists(war_location):
       self.logger.info("Removing previous war file: [{0}]", war_location)
       os.remove(war_location)
