@@ -12,9 +12,6 @@ class Backuper:
     @author stanislav bashkirtsev
   """
   logger = Logger("Backuper")
-  backup_folder = None
-  script_settings = None
-  db_operations = None
 
   def __init__(self, backup_folder, script_settings, db_operations):
     """
@@ -51,7 +48,7 @@ class Backuper:
     """
     now = datetime.now().strftime("%Y_%m_%dT%H_%M_%S")
 
-    final_backup_folder = "{0}/{1}/{2}/{3}".format(backup_folder, script_settings.env, script_settings.project, now)
+    final_backup_folder = "{0}{1}/{2}/{3}".format(backup_folder, script_settings.env, script_settings.project, now)
     os.makedirs(final_backup_folder)
     self.logger.info("Backing up old resources to [{0}]", final_backup_folder)
     return final_backup_folder

@@ -12,6 +12,9 @@ class EnvironmentConfigGrabber:
   GRABBED_CONFIGS_LOCATION = CLONE_REPO_TO + "/configs"
   logger = Logger("EnvironmentConfigGrabber")
 
+  def __init__(self, env_configs_root):
+    self.env_configs_root = env_configs_root
+
   def grab_jtalks_configs(self):
     try:
       self.__remove_previous_git_folder__()
@@ -34,11 +37,11 @@ class EnvironmentConfigGrabber:
   def __copy_grabbed_configs_into_work_dir__(self):
     grabbed_dirs_and_files = os.listdir(self.GRABBED_CONFIGS_LOCATION)
     for next_grabbed_file_or_dir in grabbed_dirs_and_files:
-      destination_file = "configs/" + next_grabbed_file_or_dir
+      destination_file = self.env_configs_root + next_grabbed_file_or_dir
       if os.path.exists(destination_file):
         self.logger.info("{0} will be overwritten by newer version from git repo", destination_file)
         self.__delete_file_or_dir__(destination_file)
-      shutil.move(self.GRABBED_CONFIGS_LOCATION + "/" + next_grabbed_file_or_dir, "./configs/")
+      shutil.move(self.GRABBED_CONFIGS_LOCATION + "/" + next_grabbed_file_or_dir, destination_file)
 
   def __delete_file_or_dir__(self, destination_file):
     if os.path.isfile(destination_file):

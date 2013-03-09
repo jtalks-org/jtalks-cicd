@@ -59,7 +59,7 @@ class Tomcat:
       os.remove(war_location)
 
   def get_config_file_location(self):
-    return os.path.join("configs", self.script_settings.env, self.get_config_name())
+    return os.path.join(self.script_settings.get_env_configs_dir(), self.script_settings.env, self.get_config_name())
 
   def put_configs_to_conf(self):
     """
@@ -67,7 +67,8 @@ class Tomcat:
     """
     final_conf_location = self.get_config_folder_location() + "/" + self.script_settings.get_app_final_name() + ".xml"
     conf_file_location = self.get_config_file_location()
-    ehcache_config_file_location = os.path.join("configs", self.script_settings.env, self.get_ehcache_config_name())
+    ehcache_config_file_location = os.path.join(self.script_settings.get_env_configs_dir(), self.script_settings.env,
+                                                self.get_ehcache_config_name())
 
     self.logger.info("Putting [{0}] into [{1}]", conf_file_location, final_conf_location)
     shutil.copyfile(conf_file_location, final_conf_location)

@@ -6,11 +6,11 @@ __author__ = 'stanislav bashkirtsev'
 
 
 class ScriptSettings:
-  GLOBAL_CONFIG_LOCATION = "configs/global-configuration.cfg"
+  SCRIPT_WORK_DIR = ""+os.path.expanduser("~/.jtalks/")
+  BACKUPS_DIR = SCRIPT_WORK_DIR + "backups/"
+  ENV_CONFIGS_DIR = SCRIPT_WORK_DIR + "environments/"
+  GLOBAL_CONFIG_LOCATION = ENV_CONFIGS_DIR + "global-configuration.cfg"
   logger = Logger("ScriptSettings")
-  env = None
-  project = None
-  build = None
 
   def __init__(self, build, project=None, env=None):
     self.env = env
@@ -20,8 +20,17 @@ class ScriptSettings:
   def log_settings(self):
     self.logger.info("Script Settings: project=[{0}], env=[{1}], build number=[{2}]",
                      self.project, self.env, self.build)
-    self.logger.info("Tomcat Location=[{0}]. Final App Name=[{1}]",
-                     self.get_tomcat_location(), self.get_app_final_name())
+    self.logger.info("Environment configuration: [{0}]", self.ENV_CONFIGS_DIR)
+
+  def create_work_dir_if_absent(self):
+    self.__create_dir_if_absent__(self.SCRIPT_WORK_DIR)
+    self.__create_dir_if_absent__(self.get_env_configs_dir())
+    self.__create_dir_if_absent__(self.get_backup_folder())
+
+  def __create_dir_if_absent__(self, directory):
+    if not os.path.exists(directory):
+      self.logger.info("Creating directory [{0}]", directory)
+      os.mkdir(directory)
 
   def get_tomcat_location(self):
     """
@@ -44,7 +53,13 @@ class ScriptSettings:
     raise RuntimeError("tomcat port parsing is not implemented yet")
 
   def get_backup_folder(self):
-    return
+    return self.BACKUPS_DIR
+
+  def get_env_configs_dir(self):
+    return self.ENV_CONFIGS_DIR
+
+  def get_global_config_location(self):
+    return self.GLOBAL_CONFIG_LOCATION
 
   def __get_property(self, section, prop_name):
     """
@@ -66,7 +81,7 @@ class ScriptSettings:
       Finds property value in project configuration. This overrides env and global configuration.
     """
     config = ConfigParser()
-    config.read(os.path.join("configs", self.env, self.project + ".cfg"))
+    config.read(os.path.join(self.ENV_CONFIGS_DIR, self.env, self.project + ".cfg"))
     return self.__get_value_from_config(config, section, prop_name)
 
   def __get_env_property(self, section, prop_name):
@@ -77,7 +92,7 @@ class ScriptSettings:
       shared between those Poulpe and JCommune.
     """
     config = ConfigParser()
-    config.read(os.path.join("configs", self.env, "environment-configuration.cfg"))
+    config.read(os.path.join(self.ENV_CONFIGS_DIR, self.env, "environment-configuration.cfg"))
     return self.__get_value_from_config(config, section, prop_name)
 
   def __get_global_prop(self, section, prop_name):

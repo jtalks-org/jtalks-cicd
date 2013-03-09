@@ -18,11 +18,11 @@ logger = Logger("deploy_to_tomcat.py")
 
 def main():
   LibVersion().log_lib_versions()
-  settings = get_project_and_build_from_arguments()
-  settings.log_settings()
-  app_context = ApplicationContext(settings)
+  (build_number, project, env) = get_project_and_build_from_arguments()
+  app_context = ApplicationContext(environment=env, project=project, build=build_number)
+  app_context.script_settings.log_settings()
   app_context.environment_config_grabber().grab_jtalks_configs()
-  app_context.nexus().download_war(project=settings.project)
+  app_context.nexus().download_war(project=app_context.script_settings.project)
   app_context.tomcat().deploy_war()
   app_context.sanity_test().check_app_started_correctly()
 
@@ -41,9 +41,8 @@ def get_project_and_build_from_arguments():
   parser.add_option("-e", "--environment", dest="env",
                     help="Environment to be deployed. Environment MUST exist on current server. Possible values: {0}".format(
                       available_envs))
-
   (options, args) = parser.parse_args()
-  return ScriptSettings(options.build_number, options.project, options.env)
+  return (options.build_number, options.project, options.env)
 
 
 """Starting the script by invoking main() method """
