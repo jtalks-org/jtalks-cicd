@@ -4,3 +4,6 @@ configs/local/*
 configs/*
 !configs/unit-test
 .idea
+dist
+jtalks_cicd.egg-info/
+
