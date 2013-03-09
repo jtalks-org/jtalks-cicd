@@ -1,11 +1,9 @@
-import sys
-import pkg_resources
 from optparse import OptionParser
 import os
-from classes.ApplicationContext import ApplicationContext
-from classes.settings.ScriptSettings import ScriptSettings
-from classes.util.LibVersion import LibVersion
-from classes.util.Logger import Logger
+from jtalks.ApplicationContext import ApplicationContext
+from jtalks.settings.ScriptSettings import ScriptSettings
+from jtalks.util.LibVersion import LibVersion
+from jtalks.util.Logger import Logger
 
 __author__ = 'stanislav bashkirtsev'
 

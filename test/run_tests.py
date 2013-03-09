@@ -4,7 +4,7 @@ from DbSettingsTest import DbSettingsTest
 from EnvListTest import EnvListTest
 from TomcatTest import TomcatTest
 from backup.BackuperTest import BackuperTest
-from classes.util.LibVersion import LibVersion
+from jtalks.util.LibVersion import LibVersion
 from parser.TomcatServerXmlTest import TomcatServerXmlTest
 from settings.ScriptSettingsTest import ScriptSettingsTest
 

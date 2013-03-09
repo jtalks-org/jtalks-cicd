@@ -2,8 +2,8 @@ import time
 
 import requests
 
-from classes.sanity.SanityCheckFailedException import SanityCheckFailedException
-from classes.util.Logger import Logger
+from jtalks.sanity.SanityCheckFailedException import SanityCheckFailedException
+from jtalks.util.Logger import Logger
 
 
 __author__ = 'stanislav bashkirtsev'

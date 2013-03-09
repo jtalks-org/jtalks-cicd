@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import shutil
 
-from classes.util.Logger import Logger
+from jtalks.util.Logger import Logger
 
 
 class Backuper:

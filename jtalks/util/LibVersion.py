@@ -1,6 +1,6 @@
 import pkg_resources
 import sys
-from classes.util.Logger import Logger
+from jtalks.util.Logger import Logger
 
 __author__ = 'stanislav bashkirtsev'
 

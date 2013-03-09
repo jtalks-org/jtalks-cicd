@@ -1,9 +1,9 @@
 import os
 from optparse import OptionParser
 
-from classes.DB import DB
-from classes.SSH import SSH
-from classes.util.Logger import Logger
+from jtalks.DB import DB
+from jtalks.SSH import SSH
+from jtalks.util.Logger import Logger
 
 logger = Logger("prod_db_to_preprod")
 

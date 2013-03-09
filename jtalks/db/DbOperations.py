@@ -1,7 +1,7 @@
 import os
 import MySQLdb
 
-from classes.util.Logger import Logger
+from jtalks.util.Logger import Logger
 
 
 class DbOperations:

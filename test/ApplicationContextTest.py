@@ -1,8 +1,8 @@
 import unittest
-from classes.ApplicationContext import ApplicationContext
-from classes.Tomcat import Tomcat
-from classes.backup.Backuper import Backuper
-from classes.settings.ScriptSettings import ScriptSettings
+from jtalks.ApplicationContext import ApplicationContext
+from jtalks.Tomcat import Tomcat
+from jtalks.backup.Backuper import Backuper
+from jtalks.settings.ScriptSettings import ScriptSettings
 
 __author__ = 'stanislav bashkirtsev'
 

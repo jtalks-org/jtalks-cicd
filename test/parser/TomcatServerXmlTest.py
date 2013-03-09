@@ -1,6 +1,6 @@
 import unittest
-from classes.parser.TomcatServerXml import TomcatServerXml
-from classes.parser.WrongConfigException import WrongConfigException
+from jtalks.parser.TomcatServerXml import TomcatServerXml
+from jtalks.parser.WrongConfigException import WrongConfigException
 
 __author__ = 'stanislav bashkirtsev'
 

@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ElementTree
-from classes.parser.WrongConfigException import WrongConfigException
-from classes.util.Logger import Logger
+from jtalks.parser.WrongConfigException import WrongConfigException
+from jtalks.util.Logger import Logger
 
 __author__ = 'stanislav bashkirtsev'
 

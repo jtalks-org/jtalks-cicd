@@ -1,5 +1,5 @@
 import unittest
-from classes.db.DbSettings import DbSettings
+from jtalks.db.DbSettings import DbSettings
 
 
 class DbSettingsTest(unittest.TestCase):

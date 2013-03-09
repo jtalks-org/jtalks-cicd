@@ -3,8 +3,8 @@ from datetime import datetime
 
 from mock import patch, MagicMock
 
-from classes.backup.Backuper import Backuper
-from classes.settings.ScriptSettings import ScriptSettings
+from jtalks.backup.Backuper import Backuper
+from jtalks.settings.ScriptSettings import ScriptSettings
 
 
 class BackuperTest(unittest.TestCase):

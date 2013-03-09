@@ -2,7 +2,7 @@ import os
 import shutil
 from git import GitCommandError
 import git.repo as repo
-from classes.util.Logger import Logger
+from jtalks.util.Logger import Logger
 
 __author__ = 'stanislav bashkirtsev'
 

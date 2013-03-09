@@ -1,7 +1,7 @@
 import unittest
-from classes.Tomcat import Tomcat
-from classes.backup.Backuper import Backuper
-from classes.settings.ScriptSettings import ScriptSettings
+from jtalks.Tomcat import Tomcat
+from jtalks.backup.Backuper import Backuper
+from jtalks.settings.ScriptSettings import ScriptSettings
 
 
 class TomcatTest(unittest.TestCase):

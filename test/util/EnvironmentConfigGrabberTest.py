@@ -1,5 +1,5 @@
 import unittest
-from classes.util.EnvironmentConfigGrabber import EnvironmentConfigGrabber
+from jtalks.util.EnvironmentConfigGrabber import EnvironmentConfigGrabber
 
 __author__ = 'stanislav bashkirtsev'
 

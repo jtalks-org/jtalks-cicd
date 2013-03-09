@@ -1,12 +1,12 @@
 import os
-from classes.Nexus import Nexus
-from classes.Tomcat import Tomcat
-from classes.backup.Backuper import Backuper
-from classes.db.DbOperations import DbOperations
-from classes.db.DbSettings import DbSettings
-from classes.parser.TomcatServerXml import TomcatServerXml
-from classes.sanity.SanityTest import SanityTest
-from classes.util.EnvironmentConfigGrabber import EnvironmentConfigGrabber
+from jtalks.Nexus import Nexus
+from jtalks.Tomcat import Tomcat
+from jtalks.backup.Backuper import Backuper
+from jtalks.db.DbOperations import DbOperations
+from jtalks.db.DbSettings import DbSettings
+from jtalks.parser.TomcatServerXml import TomcatServerXml
+from jtalks.sanity.SanityTest import SanityTest
+from jtalks.util.EnvironmentConfigGrabber import EnvironmentConfigGrabber
 
 __author__ = 'stanislav bashkirtsev'
 

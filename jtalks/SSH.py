@@ -2,7 +2,7 @@ import os
 import ConfigParser
 
 import paramiko
-from classes.util.Logger import Logger
+from jtalks.util.Logger import Logger
 
 
 class SSH:

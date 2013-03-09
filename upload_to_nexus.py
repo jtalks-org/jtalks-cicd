@@ -1,6 +1,6 @@
 from optparse import OptionParser
-from classes.ApplicationContext import ApplicationContext
-from classes.settings.ScriptSettings import ScriptSettings
+from jtalks.ApplicationContext import ApplicationContext
+from jtalks.settings.ScriptSettings import ScriptSettings
 
 
 def main():

@@ -1,8 +1,8 @@
 import urllib
 import sgmllib
 import os
-from classes.parser.PomFile import PomFile
-from classes.util.Logger import Logger
+from jtalks.parser.PomFile import PomFile
+from jtalks.util.Logger import Logger
 
 
 class Nexus:

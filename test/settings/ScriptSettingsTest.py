@@ -1,5 +1,5 @@
 import unittest
-from classes.settings.ScriptSettings import ScriptSettings
+from jtalks.settings.ScriptSettings import ScriptSettings
 
 
 __author__ = 'ctapobep'

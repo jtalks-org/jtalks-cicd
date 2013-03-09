@@ -1,5 +1,5 @@
 import unittest
-from classes.util.EnvList import EnvList
+from jtalks.util.EnvList import EnvList
 
 __author__ = 'ctapobep'
 
