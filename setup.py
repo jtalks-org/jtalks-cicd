@@ -10,6 +10,7 @@ setup(name='jtalks-cicd',
       author_email='stanislav.bashkirtsev@gmail.com',
       url='http://github.com/jtalks-org/jtalks-cicd',
       requires=['requests', 'mock', 'GitPython', 'MySQLdb'],
+      scripts=['bin/jtalks', 'bin/prod_db_to_preprod', 'bin/upload_to_nexus'],
       packages=find_packages(),
       # after package installation we'll have a nice directory instead of zipped artifact which is
       # easier to work with
