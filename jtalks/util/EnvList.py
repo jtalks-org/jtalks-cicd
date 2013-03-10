@@ -1,4 +1,5 @@
 import os
+from jtalks.util.Logger import Logger
 
 __author__ = 'ctapobep'
 
@@ -7,12 +8,18 @@ class EnvList:
   """
     Can list all the envs and apps.
   """
+  logger = Logger("EnvList")
+
+  def __init__(self, script_settings):
+    self.script_settings = script_settings
 
   def list_envs(self):
-    return os.listdir("configs")
+    envs = os.listdir(self.script_settings.get_env_configs_dir())
+    envs.remove("global-configuration.cfg")
+    return self.logger.info('[%s]' % ', '.join(map(str, envs)))
 
   def list_projects(self, env):
-    projects = os.listdir("configs/" + env)
+    projects = os.listdir(os.path.join(self.script_settings.get_env_configs_dir(), env))
     return [project.replace(".cfg", "") for project in projects if project.endswith(".cfg")]
 
   def print_envs_with_projects(self):

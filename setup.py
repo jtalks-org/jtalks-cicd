@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from distutils.core import setup
 from setuptools import find_packages
 
@@ -9,7 +10,7 @@ setup(name='jtalks-cicd',
       author='Stanislav Bashkirtsev',
       author_email='stanislav.bashkirtsev@gmail.com',
       url='http://github.com/jtalks-org/jtalks-cicd',
-      requires=['requests', 'mock', 'GitPython', 'MySQLdb'],
+      requires=['requests', 'mock', 'GitPython', 'MySQL-python'],
       scripts=['bin/jtalks', 'bin/prod_db_to_preprod', 'bin/upload_to_nexus'],
       packages=find_packages(),
       # after package installation we'll have a nice directory instead of zipped artifact which is

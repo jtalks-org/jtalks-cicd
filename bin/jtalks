@@ -1,7 +1,8 @@
+#!/usr/bin/env python
 from optparse import OptionParser
 import os
 from jtalks.ApplicationContext import ApplicationContext
-from jtalks.settings.ScriptSettings import ScriptSettings
+from jtalks.DeployToTomcatFacade import DeployToTomcatFacade
 from jtalks.util.LibVersion import LibVersion
 from jtalks.util.Logger import Logger
 
@@ -13,36 +14,44 @@ __author__ = 'stanislav bashkirtsev'
   
   Run: python [scriptname].py -h to get list of options.
 """
-logger = Logger("deploy_to_tomcat.py")
+logger = Logger("install")
 
 
 def main():
-  LibVersion().log_lib_versions()
-  (build_number, project, env) = get_project_and_build_from_arguments()
-  app_context = ApplicationContext(environment=env, project=project, build=build_number)
-  app_context.script_settings.log_settings()
-  app_context.environment_config_grabber().grab_jtalks_configs()
-  app_context.nexus().download_war(project=app_context.script_settings.project)
-  app_context.tomcat().deploy_war()
-  app_context.sanity_test().check_app_started_correctly()
-
+  (options, args) = get_project_and_build_from_arguments()
+  command = args[0]
+  try:
+    if command == "deploy":
+      LibVersion().log_lib_versions()
+      DeployToTomcatFacade().deploy(options.build_number, options.project, options.env)
+    elif command == "upload-to-nexus":
+      LibVersion().log_lib_versions()
+      ApplicationContext(options.env, options.project, options.build_number).nexus().upload_war("../pom.xml")
+    elif command == "list-envs":
+      ApplicationContext(None, None, None).env_list().list_envs()
+    else:
+      logger.error("Command was not recognized, you can use: [install], [upload-to-nexus]")
+  except:
+    logger.error("Program finished with errors")
+    return 1
 
 def get_project_and_build_from_arguments():
   """
   Gets the build number from parameters passed to the script (the -b or --build options). 
   If nothing was specified, None is returned.
   """
-  available_envs = os.listdir("configs")
   parser = OptionParser()
   parser.add_option("-b", "--build", dest="build_number",
                     help="The build number of the Deployment Pipline to deploy a unique artifact to Nexus.")
   parser.add_option("-p", "--project", dest="project",
                     help="Project name to be deployed to tomcat (e.g. jcommune, poulpe)")
   parser.add_option("-e", "--environment", dest="env",
-                    help="Environment to be deployed. Environment MUST exist on current server. Possible values: {0}".format(
-                      available_envs))
+                    help="Environment to be deployed. Environment MUST exist on current server. Run [list-envs] to "
+                         "see possible values")
   (options, args) = parser.parse_args()
-  return (options.build_number, options.project, options.env)
+  if len(args) == 0:
+    logger.error("No command was specified, you can use: [install], [upload-to-nexus]")
+  return (options, args)
 
 
 """Starting the script by invoking main() method """

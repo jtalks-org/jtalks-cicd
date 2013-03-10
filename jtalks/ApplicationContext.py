@@ -7,6 +7,7 @@ from jtalks.db.DbSettings import DbSettings
 from jtalks.parser.TomcatServerXml import TomcatServerXml
 from jtalks.sanity.SanityTest import SanityTest
 from jtalks.settings.ScriptSettings import ScriptSettings
+from jtalks.util.EnvList import EnvList
 from jtalks.util.EnvironmentConfigGrabber import EnvironmentConfigGrabber
 
 __author__ = 'stanislav bashkirtsev'
@@ -53,6 +54,9 @@ class ApplicationContext:
 
   def script_settings(self):
     return self.script_settings
+
+  def env_list(self):
+    return EnvList(script_settings=self.script_settings)
 
   def __project_config_file_location__(self, env, project):
     return os.path.join(self.script_settings.get_env_configs_dir(), env, project + ".xml")
