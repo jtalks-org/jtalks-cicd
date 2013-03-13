@@ -34,8 +34,11 @@ def main():
       app_context.load_db_from_backup().load()
     else:
       logger.error("Command was not recognized, you can use: [deploy], [upload-to-nexus]")
+      raise RuntimeError
   except:
     logger.error("Program finished with errors")
+    if options.debug:
+      logger.error(sys.exc_info()[0])
     sys.exit(1)
 
 
@@ -52,11 +55,12 @@ def get_project_and_build_from_arguments():
   parser.add_option("-e", "--environment", dest="env",
                     help="Environment to be deployed. Environment MUST exist on current server. Run [list-envs] to "
                          "see possible values")
+  parser.add_option("-d", "--debug", dest="debug",
+                    help="Whether to show additional errors and logs or not")
   (options, args) = parser.parse_args()
   if len(args) == 0:
     logger.error("No command was specified, you can use: [install], [upload-to-nexus]")
   return (options, args)
-
 
 """Starting the script by invoking main() method """
 if __name__ == "__main__":
