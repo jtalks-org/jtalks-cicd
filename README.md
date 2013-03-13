@@ -27,5 +27,3 @@ there.
 * Sample env configuration should be created to give users a hint on how configs should be created and what should be
  there
 
-------------------------------
-Another script is `prod_db_to_preprod.py` which is needed only for preprod environment where we need to have the same DB as the on on PROD. That script gets the DB from daily backups on FTP server, inserts all the data to the PREPROD database and changes some critical information like admin password, JCommune URL/name, etc.

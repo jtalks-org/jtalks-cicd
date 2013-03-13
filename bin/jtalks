@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from optparse import OptionParser
+import sys
 from jtalks.ApplicationContext import ApplicationContext
 from jtalks.DeployToTomcatFacade import DeployToTomcatFacade
 from jtalks.util.LibVersion import LibVersion
@@ -19,11 +20,11 @@ logger = Logger("install")
 def main():
   (options, args) = get_project_and_build_from_arguments()
   command = args[0]
-  app_context = ApplicationContext(options.env, options.project, options.build_number)
+  app_context = ApplicationContext(options.env, options.project, options.build)
   try:
     if command == "deploy":
       LibVersion().log_lib_versions()
-      DeployToTomcatFacade().deploy(options.build_number, options.project, options.env)
+      DeployToTomcatFacade().deploy(options.build, options.project, options.env)
     elif command == "upload-to-nexus":
       LibVersion().log_lib_versions()
       app_context.nexus().upload_war("../pom.xml")
@@ -35,7 +36,7 @@ def main():
       logger.error("Command was not recognized, you can use: [deploy], [upload-to-nexus]")
   except:
     logger.error("Program finished with errors")
-    return 1
+    sys.exit(1)
 
 
 def get_project_and_build_from_arguments():
@@ -44,7 +45,7 @@ def get_project_and_build_from_arguments():
   If nothing was specified, None is returned.
   """
   parser = OptionParser()
-  parser.add_option("-b", "--build", dest="build_number",
+  parser.add_option("-b", "--build", dest="build",
                     help="The build number of the Deployment Pipline to deploy a unique artifact to Nexus.")
   parser.add_option("-p", "--project", dest="project",
                     help="Project name to be deployed to tomcat (e.g. jcommune, poulpe)")
