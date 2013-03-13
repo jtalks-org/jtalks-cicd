@@ -30,7 +30,7 @@ def main():
     elif command == "list-envs":
       ApplicationContext(None, None, None).env_list().list_envs()
     else:
-      logger.error("Command was not recognized, you can use: [install], [upload-to-nexus]")
+      logger.error("Command was not recognized, you can use: [deploy], [upload-to-nexus]")
   except:
     logger.error("Program finished with errors")
     return 1
