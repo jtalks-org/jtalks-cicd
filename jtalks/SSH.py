@@ -10,29 +10,29 @@ class SSH:
   config = None
   sftpTransport = None
   sftpClient = None
-  sftpHost=None
-  sftpPort=None
-  sftpUser=None
-  sftpPass=None
-  sftpBackupArchive=None
-  sftpBackupFileName=None
-  logger = Logger("Ssh")
+  sftpHost = None
+  sftpPort = None
+  sftpUser = None
+  sftpPass = None
+  sftpBackupArchive = None
+  sftpBackupFileName = None
+  logger = Logger("SSH")
 
-  def __init__(self, env):
-    self.env = env
+  def __init__(self, script_settings):
+    self.env = script_settings.env
     self.config = ConfigParser.ConfigParser()
-    self.config.read("configs/"+env + "/ssh.cfg")
+    self.config.read(script_settings.get_env_configs_dir() + self.env + "/ssh.cfg")
     self.sftpHost = self.config.get('sftp', 'sftp_host')
     self.sftpPort = self.config.get('sftp', 'sftp_port')
     self.sftpUser = self.config.get('sftp', 'sftp_user')
     self.sftpPass = self.config.get('sftp', 'sftp_pass')
     self.sftpBackupArchive = self.config.get('sftp', 'sftp_backup_archive')
     self.sftpBackupFileName = self.config.get('sftp', 'sftp_backup_filename')
-  
+
   def download_backup_prod_db(self):
     self.sftp_connection()
     attrList = self.sftpClient.listdir_attr('.')
-    attrTimeTmp = 0;
+    attrTimeTmp = 0
     dirWithLastUpdate = None
     for attr in attrList:
       if attrTimeTmp < attr.st_mtime:
@@ -45,12 +45,12 @@ class SSH:
   def sftp_connection_close(self):
     self.sftpClient.close()
     self.sftpTransport.close()
-     
+
   def sftp_connection(self):
-    self.logger.info("Getting a DB backup from {0}", self.sftpHost) 
+    self.logger.info("Getting a DB backup from {0}", self.sftpHost)
     self.sftpTransport = paramiko.Transport((self.sftpHost, int(self.sftpPort)))
-    self.sftpTransport.connect(username=self.sftpUser,password=self.sftpPass)
-    self.sftpClient = paramiko.SFTPClient.from_transport(self.sftpTransport)   
+    self.sftpTransport.connect(username=self.sftpUser, password=self.sftpPass)
+    self.sftpClient = paramiko.SFTPClient.from_transport(self.sftpTransport)
 
   def remove_backup_prod_db_file(self):
     os.popen('rm -rf ' + self.sftpBackupFileName)  

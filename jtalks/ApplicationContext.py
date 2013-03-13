@@ -1,5 +1,7 @@
 import os
+from jtalks.DB import DB
 from jtalks.Nexus import Nexus
+from jtalks.SSH import SSH
 from jtalks.Tomcat import Tomcat
 from jtalks.backup.Backuper import Backuper
 from jtalks.db.DbOperations import DbOperations
@@ -54,7 +56,13 @@ class ApplicationContext:
     return TomcatServerXml.fromfile(self.script_settings.get_tomcat_location() + "/conf/server.xml")
 
   def load_db_from_backup(self):
-    return LoadDbFromBackup(self.script_settings.env)
+    return LoadDbFromBackup(self.db(), self.ssh())
+
+  def ssh(self):
+    return SSH(self.script_settings)
+
+  def db(self):
+    return DB(self.script_settings)
 
   def script_settings(self):
     return self.script_settings

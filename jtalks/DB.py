@@ -25,10 +25,10 @@ class DB:
   poulpeAdminPass = None
   logger = Logger("DB")
 
-  def __init__(self, env):
-    self.env = env
+  def __init__(self, script_settings):
+    self.env = script_settings.env
     self.config = ConfigParser.ConfigParser()
-    self.config.read("configs/" + env + "/db.cfg")
+    self.config.read(script_settings.get_env_configs_dir() + self.env + "/db.cfg")
     self.dbHost = self.config.get('db', 'host')
     self.dbUser = self.config.get('db', 'user')
     self.dbPass = self.config.get('db', 'pass')
