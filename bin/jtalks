@@ -35,10 +35,10 @@ def main():
     else:
       logger.error("Command was not recognized, you can use: [deploy], [upload-to-nexus]")
       raise RuntimeError
-  except:
+  except Exception, e:
     logger.error("Program finished with errors")
     if options.debug:
-      logger.error(sys.exc_info()[0])
+      logger.error("Root cause: %s" % e)
     sys.exit(1)
 
 
