@@ -4,6 +4,7 @@ from jtalks.Tomcat import Tomcat
 from jtalks.backup.Backuper import Backuper
 from jtalks.db.DbOperations import DbOperations
 from jtalks.db.DbSettings import DbSettings
+from jtalks.db.LoadDbFromBackup import LoadDbFromBackup
 from jtalks.parser.TomcatServerXml import TomcatServerXml
 from jtalks.sanity.SanityTest import SanityTest
 from jtalks.settings.ScriptSettings import ScriptSettings
@@ -51,6 +52,9 @@ class ApplicationContext:
 
   def tomcat_server_xml(self):
     return TomcatServerXml.fromfile(self.script_settings.get_tomcat_location() + "/conf/server.xml")
+
+  def load_db_from_backup(self):
+    return LoadDbFromBackup(self.script_settings.env)
 
   def script_settings(self):
     return self.script_settings

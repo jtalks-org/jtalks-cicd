@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from optparse import OptionParser
-import os
 from jtalks.ApplicationContext import ApplicationContext
 from jtalks.DeployToTomcatFacade import DeployToTomcatFacade
 from jtalks.util.LibVersion import LibVersion
@@ -20,20 +19,24 @@ logger = Logger("install")
 def main():
   (options, args) = get_project_and_build_from_arguments()
   command = args[0]
+  app_context = ApplicationContext(options.env, options.project, options.build_number)
   try:
     if command == "deploy":
       LibVersion().log_lib_versions()
       DeployToTomcatFacade().deploy(options.build_number, options.project, options.env)
     elif command == "upload-to-nexus":
       LibVersion().log_lib_versions()
-      ApplicationContext(options.env, options.project, options.build_number).nexus().upload_war("../pom.xml")
+      app_context.nexus().upload_war("../pom.xml")
     elif command == "list-envs":
-      ApplicationContext(None, None, None).env_list().list_envs()
+      app_context.env_list().list_envs()
+    elif command == "load-db-from-backup":
+      app_context.load_db_from_backup().load()
     else:
       logger.error("Command was not recognized, you can use: [deploy], [upload-to-nexus]")
   except:
     logger.error("Program finished with errors")
     return 1
+
 
 def get_project_and_build_from_arguments():
   """
