@@ -10,7 +10,7 @@ setup(name='jtalks-cicd',
       author='Stanislav Bashkirtsev',
       author_email='stanislav.bashkirtsev@gmail.com',
       url='http://github.com/jtalks-org/jtalks-cicd',
-      install_requires=['requests', 'mock', 'GitPython', 'paramiko', 'my\sql-connector-python', 'MySQL-python'],
+      install_requires=['requests', 'mock', 'GitPython', 'paramiko', 'mysql-connector-python', 'MySQL-python'],
       scripts=['bin/jtalks'],
       packages=find_packages(),
       # after package installation we'll have a nice directory instead of zipped artifact which is
