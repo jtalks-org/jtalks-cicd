@@ -29,7 +29,7 @@ class Nexus:
 
     maven_deploy_command = ("mvn deploy:deploy-file -Durl={3} " +
                             "-DrepositoryId=deployment-pipeline -DgroupId=deployment-pipeline -DartifactId={0} -Dpackaging=war " +
-                            "-Dfile=../{0}-view/{0}-web-view/target/{0}.war -Dversion={4}"
+                            "-Dfile={0}-view/{0}-web-view/target/{0}.war -Dversion={4}"
     ).format(artifact_id, artifact_version, self.build_number, self.base_url, final_version)
     print maven_deploy_command
 
