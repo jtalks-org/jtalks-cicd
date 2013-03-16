@@ -5,12 +5,12 @@ from setuptools import find_packages
 __author__ = 'stanislav bashkirtsev'
 
 setup(name='jtalks-cicd',
-      version='1.0.9',
+      version='1.1.0',
       description='Installs JTalks apps like jcommune and poulpe configuring them. Usually used by CI to implement CD (continuous delivery)',
       author='Stanislav Bashkirtsev',
       author_email='stanislav.bashkirtsev@gmail.com',
       url='http://github.com/jtalks-org/jtalks-cicd',
-      install_requires=['requests', 'mock', 'GitPython', 'paramiko'],
+      install_requires=['requests', 'mock', 'GitPython', 'paramiko', 'my\sql-connector-python', 'MySQL-python'],
       scripts=['bin/jtalks'],
       packages=find_packages(),
       # after package installation we'll have a nice directory instead of zipped artifact which is
