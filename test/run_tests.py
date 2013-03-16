@@ -7,6 +7,7 @@ from backup.BackuperTest import BackuperTest
 from jtalks.util.LibVersion import LibVersion
 from parser.TomcatServerXmlTest import TomcatServerXmlTest
 from settings.ScriptSettingsTest import ScriptSettingsTest
+from NexusTest import NexusTest
 
 if __name__ == '__main__':
   LibVersion().log_lib_versions()
@@ -18,6 +19,7 @@ if __name__ == '__main__':
   suite.addTest(unittest.makeSuite(BackuperTest))
   suite.addTest(unittest.makeSuite(TomcatServerXmlTest))
   suite.addTest(unittest.makeSuite(ScriptSettingsTest))
+  suite.addTest(unittest.makeSuite(NexusTest))
   result = unittest.TextTestRunner(verbosity=2).run(suite)
 
   if result.wasSuccessful():

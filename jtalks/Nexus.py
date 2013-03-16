@@ -12,7 +12,6 @@ class Nexus:
   like project name and version by pom.xml).
   """
   base_url = "http://repo.jtalks.org/content/repositories/deployment-pipeline/"
-  build_number = None
   logger = Logger("Nexus")
 
   def __init__(self, build_number):
@@ -26,17 +25,18 @@ class Nexus:
     pom = PomFile(pom_file_location)
     artifact_version = pom.version()
     artifact_id = pom.artifact_id()
+    final_version = self.__final_version__(artifact_version)
 
     maven_deploy_command = ("mvn deploy:deploy-file -Durl={3} " +
                             "-DrepositoryId=deployment-pipeline -DgroupId=deployment-pipeline -DartifactId={0} -Dpackaging=war " +
-                            "-Dfile=../{0}-view/{0}-web-view/target/{0}.war -Dversion={1}.{2}"
-    ).format(artifact_id, artifact_version, self.build_number, self.base_url)
+                            "-Dfile=../{0}-view/{0}-web-view/target/{0}.war -Dversion={4}"
+    ).format(artifact_id, artifact_version, self.build_number, self.base_url, final_version)
     print maven_deploy_command
 
     return_code = os.system(maven_deploy_command)
     if (return_code != 0):
-      self.logger.error("Maven returned error code: " + return_code)
-      raise Exception("Maven returned error code: " + return_code)
+      self.logger.error("Maven returned error code: " + str(return_code))
+      raise Exception("Maven returned error code: " + str(return_code))
 
   def download_war(self, project):
     self.logger.info("Looking up build #{0} for {1} project", self.build_number, project)
@@ -51,6 +51,15 @@ class Nexus:
     #get version by URL (last part is something like /jcommune/12.3.123/)
     artifact_version = artifact_version_url.rpartition(project + "/")[2].replace("/", "")
     return (artifact_version_url + "{0}-{1}.war".format(project, artifact_version))
+
+  def __final_version__(self, artifact_version):
+    """
+     If build number is already in the version, then we should do nothing with it
+    """
+    if artifact_version.endswith("." + self.build_number):
+      return artifact_version
+    else:
+      return artifact_version + "." + self.build_number
 
 
 class NexusPageWithVersions(sgmllib.SGMLParser):

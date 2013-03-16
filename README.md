@@ -10,7 +10,7 @@ Project State
 * SSH information to log in to the env should be also kept in configuration
 
 -------------------------------
-Both scripts in root directory (upload_to_nexus.py and deploy_to_tomcat.py) has help. Invoke them with --help key to get help message.
+The `bin/jtalks` script has help. Invoke them with --help key to get help message.
 
 `deploy_to_tomcat.py` is used to deploy application to tomcat instance. Typical usage is
 python deploy_to_tomcat.py --project jcommune --environment local --build 583

@@ -14,9 +14,12 @@ class EnvList:
     self.script_settings = script_settings
 
   def list_envs(self):
+    self.logger.info('[%s]' % ', '.join(map(str, self.get_list_of_envs())))
+
+  def get_list_of_envs(self):
     envs = os.listdir(self.script_settings.get_env_configs_dir())
     envs.remove("global-configuration.cfg")
-    return self.logger.info('[%s]' % ', '.join(map(str, envs)))
+    return envs
 
   def list_projects(self, env):
     projects = os.listdir(os.path.join(self.script_settings.get_env_configs_dir(), env))
