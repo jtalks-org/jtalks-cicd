@@ -20,6 +20,8 @@ class Backuper:
       @param script_settings is instance of ScriptSettings class
       @param db_operations instance of DbOperations
     """
+    if not backup_folder.endswith("/"):
+      raise ValueError("Folder name should finish with '/'")
     self.backup_folder = backup_folder
     self.script_settings = script_settings
     self.db_operations = db_operations
