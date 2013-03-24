@@ -6,7 +6,7 @@ from jtalks.settings.ScriptSettings import ScriptSettings
 
 class TomcatTest(unittest.TestCase):
   def test_paths(self):
-    tomcat = Tomcat(Backuper(None, None, None), ScriptSettings(build=None, project='project1', env='unit-test'))
+    tomcat = Tomcat(Backuper("/", None, None), ScriptSettings(build=None, project='project1', env='unit-test'))
 
     self.assertEquals('project1.xml', tomcat.get_config_name())
     self.assertEquals('project1.ehcache.xml', tomcat.get_ehcache_config_name())
