@@ -1,3 +1,8 @@
+JTalks Continuous Integration & Continuous Delivery scripts
+
+The best way to try it out is to use [JTalks VM](https://github.com/jtalks-org/jtalks-vm) project which allows to
+start up a virtual environment with JTalks CICD on board automatically.
+
 ###Installation Guide
 This project contains JTalks Environment configuration like DEV, UAT, PROD. To use it you'll need python to be installed (was checked on 2.6.6) and:
 * `apt-get install python-dev libmysqlclient-dev`
