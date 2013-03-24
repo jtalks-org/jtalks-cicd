@@ -1,11 +1,14 @@
 from xml.dom.minidom import parse
+import os
 import re
+from jtalks.util.Logger import Logger
 
 
 class DbSettings:
   """
   Class keeping connection settings to the database
   """
+  logger = Logger("DbSettings")
 
   def __init__(self, project, config_file_location):
     """
@@ -23,6 +26,9 @@ class DbSettings:
     """
     Parses given config file and gets information about connection settings.
     """
+    if not os.path.exists(config_file_path):
+      self.logger.error("Config file not found: [{0}]", config_file_path)
+      raise ValueError
     configs_doc = parse(config_file_path)
     env_elements = configs_doc.getElementsByTagName('Environment')
 

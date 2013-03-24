@@ -6,7 +6,7 @@ __author__ = 'stanislav bashkirtsev'
 
 
 class ScriptSettings:
-  SCRIPT_WORK_DIR = ""+os.path.expanduser("~/.jtalks/")
+  SCRIPT_WORK_DIR = "" + os.path.expanduser("~/.jtalks/")
   BACKUPS_DIR = SCRIPT_WORK_DIR + "backups/"
   ENV_CONFIGS_DIR = SCRIPT_WORK_DIR + "environments/"
   GLOBAL_CONFIG_LOCATION = ENV_CONFIGS_DIR + "global-configuration.cfg"

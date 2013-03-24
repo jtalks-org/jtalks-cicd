@@ -18,7 +18,6 @@ class DeployToTomcatFacade:
       raise RuntimeError
 
     app_context = ApplicationContext(environment=env, project=project, build=build_number)
-    app_context.script_settings.log_settings()
     app_context.environment_config_grabber().grab_jtalks_configs()
     app_context.nexus().download_war(project=app_context.script_settings.project)
     app_context.tomcat().deploy_war()

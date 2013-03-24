@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from optparse import OptionParser
 import sys
+import traceback
 from jtalks.ApplicationContext import ApplicationContext
 from jtalks.DeployToTomcatFacade import DeployToTomcatFacade
 from jtalks.util.LibVersion import LibVersion
@@ -35,10 +36,10 @@ def main():
     else:
       logger.error("Command was not recognized, you can use: [deploy], [upload-to-nexus]")
       raise RuntimeError
-  except Exception, e:
+  except Exception:
     logger.error("Program finished with errors")
     if options.debug:
-      logger.error("Root cause: %s" % e)
+      logger.error("Root cause: %s" % traceback.format_exc())
     sys.exit(1)
 
 
