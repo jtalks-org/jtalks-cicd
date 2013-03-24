@@ -28,8 +28,9 @@ class EnvironmentConfigGrabber:
 
   def __remove_previous_git_folder__(self):
     try:
-      self.logger.info("Removing {0} directory if it was there", self.CLONE_REPO_TO)
-      shutil.rmtree(self.CLONE_REPO_TO)
+      if os.path.exists(self.CLONE_REPO_TO):
+        self.logger.info("Removing {0} directory if it was there", self.CLONE_REPO_TO)
+        shutil.rmtree(self.CLONE_REPO_TO)
     except OSError as e:
       if e.errno is not 2:#No such file or directory
         self.logger.warn(e.message)

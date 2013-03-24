@@ -14,7 +14,7 @@ __author__ = 'stanislav bashkirtsev'
   
   Run: python [scriptname].py -h to get list of options.
 """
-logger = Logger("install")
+logger = Logger("entry-point")
 
 
 def main():

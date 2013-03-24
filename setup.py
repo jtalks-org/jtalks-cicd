@@ -5,7 +5,7 @@ from setuptools import find_packages
 __author__ = 'stanislav bashkirtsev'
 
 setup(name='jtalks-cicd',
-      version='1.1.0',
+      version='1.1.1',
       description='Installs JTalks apps like jcommune and poulpe configuring them. Usually used by CI to implement CD (continuous delivery)',
       author='Stanislav Bashkirtsev',
       author_email='stanislav.bashkirtsev@gmail.com',
