@@ -33,4 +33,4 @@ there.
 ###TBD:
 * Sample env configuration should be created to give users a hint on how configs should be created and what should be
  there
-
+* Vagrant environment configuration should be added to be started from vagrant jtalks vm
