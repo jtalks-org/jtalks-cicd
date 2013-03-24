@@ -13,7 +13,7 @@ class TomcatTest(unittest.TestCase):
     self.assertEquals('location overriden by project config/conf/Catalina/localhost',
                       tomcat.get_config_folder_location())
     self.assertEquals('location overriden by project config/webapps', tomcat.get_web_apps_location())
-    self.assertEquals('configs/unit-test/project1.xml', tomcat.get_config_file_location())
+    self.assertTrue(tomcat.get_config_file_location().endswith('.jtalks/environments/unit-test/project1.xml'))
 
 
 if __name__ == '__main__':
