@@ -6,6 +6,7 @@ __author__ = 'stanislav bashkirtsev'
 
 
 class ScriptSettings:
+  SCRIPT_TEMD_DIR = '/tmp/jtalks-cicd/'
   SCRIPT_WORK_DIR = "" + os.path.expanduser("~/.jtalks/")
   BACKUPS_DIR = SCRIPT_WORK_DIR + "backups/"
   ENV_CONFIGS_DIR = SCRIPT_WORK_DIR + "environments/"
@@ -43,6 +44,12 @@ class ScriptSettings:
       Gets the name of the application to be deployed (even if it's Poulpe, it can be deployed as ROOT.war).
     """
     return self.__get_property('app', 'final_name')
+
+  def get_temp_dir(self):
+    """
+     Script can save there some temp files.
+    """
+    return self.SCRIPT_TEMD_DIR
 
   def get_tomcat_port(self):
     """

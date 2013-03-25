@@ -46,7 +46,7 @@ class ApplicationContext:
     return db_settings
 
   def environment_config_grabber(self):
-    return EnvironmentConfigGrabber(self.script_settings.get_env_configs_dir())
+    return EnvironmentConfigGrabber(self.script_settings.get_env_configs_dir(), self.script_settings.get_temp_dir())
 
   def sanity_test(self):
     http_port = self.tomcat_server_xml().http_port()
