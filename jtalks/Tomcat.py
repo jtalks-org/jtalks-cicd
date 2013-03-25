@@ -52,6 +52,8 @@ class Tomcat:
     if os.path.exists(app_location):
       self.logger.info("Removing previous app: [{0}]", app_location)
       shutil.rmtree(app_location)
+    else:
+      self.logger.info("Previous application was not found in [{0}], thus nothing to remove", app_location)
 
     war_location = app_location + ".war"
     if os.path.exists(war_location):
