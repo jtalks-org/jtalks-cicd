@@ -81,6 +81,9 @@ class ScriptSettings:
       value = self.__get_env_property(section, prop_name)
     if value == None:
       value = self.__get_global_prop(section, prop_name)
+    if value == None:
+      self.logger.error("Property [{0}] was not found in any configs", prop_name)
+      raise ValueError
     return self.__replace_placeholders(value)
 
   def __get_project_property(self, section, prop_name):
