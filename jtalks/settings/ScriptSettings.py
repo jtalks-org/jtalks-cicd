@@ -13,10 +13,15 @@ class ScriptSettings:
   GLOBAL_CONFIG_LOCATION = ENV_CONFIGS_DIR + "global-configuration.cfg"
   logger = Logger("ScriptSettings")
 
-  def __init__(self, build, project=None, env=None):
+  def __init__(self, build, project=None, env=None, grab_envs=None):
+    """
+     @param grab_envs - whether or not we should clone JTalks predefined environment configuration from private git
+     repo
+    """
     self.env = env
     self.build = build
     self.project = project
+    self.grab_envs = grab_envs
 
   def log_settings(self):
     self.logger.info("Script Settings: project=[{0}], env=[{1}], build number=[{2}]",

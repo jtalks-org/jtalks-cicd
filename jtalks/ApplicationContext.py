@@ -1,5 +1,6 @@
 import os
 from jtalks.DB import DB
+from jtalks.DeployToTomcatFacade import DeployToTomcatFacade
 from jtalks.Nexus import Nexus
 from jtalks.SSH import SSH
 from jtalks.Tomcat import Tomcat
@@ -22,8 +23,8 @@ class ApplicationContext:
     are all constructed manually in Python code.
   """
 
-  def __init__(self, environment, project, build):
-    self.script_settings = ScriptSettings(build=build, project=project, env=environment)
+  def __init__(self, environment, project, build, grab_envs):
+    self.script_settings = ScriptSettings(build=build, project=project, env=environment, grab_envs=grab_envs)
     self.script_settings.create_work_dir_if_absent()
     self.script_settings.log_settings()
 
@@ -44,6 +45,9 @@ class ApplicationContext:
                                                                  self.script_settings.project)
     db_settings = DbSettings(project=self.script_settings.project, config_file_location=config_file_location)
     return db_settings
+
+  def deploy_to_tomcat_facade(self):
+    return DeployToTomcatFacade(self)
 
   def environment_config_grabber(self):
     return EnvironmentConfigGrabber(self.script_settings.get_env_configs_dir(), self.script_settings.get_temp_dir())
