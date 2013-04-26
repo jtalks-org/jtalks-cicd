@@ -8,7 +8,7 @@ __author__ = 'stanislav bashkirtsev'
 
 
 class ApplicationContextTest(unittest.TestCase):
-  sut = ApplicationContext("unit-test", "project1", 510)
+  sut = ApplicationContext("unit-test", "project1", 510, False)
 
   def test_nexus_is_created(self):
     nexus = self.sut.nexus()
