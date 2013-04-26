@@ -12,6 +12,7 @@ class Backuper:
     @author stanislav bashkirtsev
   """
   logger = Logger("Backuper")
+  BACKUP_FOLDER_DATE_FORMAT = "%Y_%m_%dT%H_%M_%S"
 
   def __init__(self, backup_folder, script_settings, db_operations):
     """
@@ -22,22 +23,27 @@ class Backuper:
     """
     if not backup_folder.endswith("/"):
       raise ValueError("Folder name should finish with '/'")
-    self.backup_folder = backup_folder
+    self.root_backup_folder = backup_folder
     self.script_settings = script_settings
     self.db_operations = db_operations
 
   def backup(self):
     """
     Does all operations for project backup:
-     - delete old backup data
      - backup the application database
      - backup application war-file
      - backup tomcat and ehcache configuration files
     """
-    folder_to_put_backups = self.create_folder_to_backup(self.backup_folder, self.script_settings)
+    folder_to_put_backups = self.create_folder_to_backup(self.root_backup_folder, self.script_settings)
     self.backup_tomcat(folder_to_put_backups)
     self.backup_db(folder_to_put_backups)
 
+  def clean_old_backups(self, backups_to_keep):
+    """
+    In order not to keep a lot of useless backups that take space, we're purging old ones.
+    @param backups_to_keep amount of backups to keep in backup folder without removal
+    """
+    all_backups = self.get_list_of_backups()
 
   def create_folder_to_backup(self, backup_folder, script_settings):
     """
@@ -48,7 +54,7 @@ class Backuper:
       @param backups_folder - basic folder to put backups there, it will be concatenated with env and current time
       @param script_settings to figure out what's the env and what's the project we're going to backup
     """
-    now = datetime.now().strftime("%Y_%m_%dT%H_%M_%S")
+    now = datetime.now().strftime(self.BACKUP_FOLDER_DATE_FORMAT)
 
     final_backup_folder = "{0}{1}/{2}/{3}".format(backup_folder, script_settings.env, script_settings.project, now)
     os.makedirs(final_backup_folder)
@@ -68,3 +74,13 @@ class Backuper:
 
   def backup_db(self, backup_folder):
     self.db_operations.backup_database(backup_folder)
+
+  def get_list_of_backups(self):
+    """
+      Gets the list of backups saved for
+    """
+    return os.listdir(self.root_backup_folder)
+
+  def get_project_backup_folder(self):
+    return "{0}{1}/{2}".format(self.root_backup_folder, self.script_settings.env, self.script_settings.project)
+

@@ -1,4 +1,5 @@
 import unittest
+import os
 from datetime import datetime
 
 from mock import patch, MagicMock
@@ -19,6 +20,13 @@ class BackuperTest(unittest.TestCase):
     folder_to_create = "/tmp/unit-test/project1/{0}".format(now) #Couldn't find a way to mock date
     makedirs_method.assert_called_with(folder_to_create)
 
+  def test_get_project_backup_folder(self):
+      self.assertEqual("/tmp/unit-test/project1", sut.get_project_backup_folder())
+
+  @patch('os.listdir')
+  def test_get_list_of_backups(self, list_dir_method):
+    list_dir_method.return_value = ["1", "2"]
+    self.assertEqual(["1", "2"], sut.get_list_of_backups())
 
 db_operations = MagicMock()
 sut = Backuper("/tmp/", ScriptSettings(None, "project1", "unit-test"), db_operations)
