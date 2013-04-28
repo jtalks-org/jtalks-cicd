@@ -8,7 +8,6 @@ __author__ = 'stanislav bashkirtsev'
 
 
 class ApplicationContextTest(unittest.TestCase):
-  sut = ApplicationContext("unit-test", "project1", 510, False, "./configs/unit-test")
 
   def test_nexus_is_created(self):
     nexus = self.sut.nexus()
@@ -20,3 +19,6 @@ class ApplicationContextTest(unittest.TestCase):
     self.assertTrue(isinstance(tomcat, Tomcat))
     self.assertTrue(isinstance(tomcat.script_settings, ScriptSettings))
     self.assertTrue(isinstance(tomcat.backuper, Backuper))
+
+
+  sut = ApplicationContext("unit-test", "project1", 510, False, "./configs/unit-test")

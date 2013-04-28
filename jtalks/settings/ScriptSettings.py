@@ -7,13 +7,9 @@ __author__ = 'stanislav bashkirtsev'
 
 class ScriptSettings:
   SCRIPT_TEMD_DIR = '/tmp/jtalks-cicd/'
-  script_work_dir = "" + os.path.expanduser("~/.jtalks/")
-  backups_dir = script_work_dir + "backups/"
-  ENV_CONFIGS_DIR = script_work_dir + "environments/"
-  GLOBAL_CONFIG_LOCATION = ENV_CONFIGS_DIR + "global-configuration.cfg"
   logger = Logger("ScriptSettings")
 
-  def __init__(self, build, project=None, env=None, grab_envs=None, work_dir=None):
+  def __init__(self, build, project=None, env=None, grab_envs=None, work_dir="" + os.path.expanduser("~/.jtalks/")):
     """
      @param grab_envs - whether or not we should clone JTalks predefined environment configuration from private git
      repo
@@ -23,12 +19,18 @@ class ScriptSettings:
     self.build = build
     self.project = project
     self.grab_envs = grab_envs
-    self.script_work_dir = work_dir
+    self.init_settings(work_dir)
+
+  def init_settings(self, work_dir_location):
+    self.script_work_dir = work_dir_location
+    self.backups_dir = self.script_work_dir + "backups/"
+    self.env_configs_dir = self.script_work_dir + "environments/"
+    self.global_config_location = self.env_configs_dir + "global-configuration.cfg"
 
   def log_settings(self):
     self.logger.info("Script Settings: project=[{0}], env=[{1}], build number=[{2}]",
                      self.project, self.env, self.build)
-    self.logger.info("Environment configuration: [{0}]", self.ENV_CONFIGS_DIR)
+    self.logger.info("Environment configuration: [{0}]", self.env_configs_dir)
 
   def create_work_dir_if_absent(self):
     self.__create_dir_if_absent__(self.script_work_dir)
@@ -70,10 +72,10 @@ class ScriptSettings:
     return self.backups_dir
 
   def get_env_configs_dir(self):
-    return self.ENV_CONFIGS_DIR
+    return self.env_configs_dir
 
   def get_global_config_location(self):
-    return self.GLOBAL_CONFIG_LOCATION
+    return self.global_config_location
 
   def __get_property(self, section, prop_name):
     """
@@ -98,7 +100,7 @@ class ScriptSettings:
       Finds property value in project configuration. This overrides env and global configuration.
     """
     config = ConfigParser()
-    config.read(os.path.join(self.ENV_CONFIGS_DIR, self.env, self.project + ".cfg"))
+    config.read(os.path.join(self.env_configs_dir, self.env, self.project + ".cfg"))
     return self.__get_value_from_config(config, section, prop_name)
 
   def __get_env_property(self, section, prop_name):
@@ -109,7 +111,7 @@ class ScriptSettings:
       shared between those Poulpe and JCommune.
     """
     config = ConfigParser()
-    config.read(os.path.join(self.ENV_CONFIGS_DIR, self.env, "environment-configuration.cfg"))
+    config.read(os.path.join(self.env_configs_dir, self.env, "environment-configuration.cfg"))
     return self.__get_value_from_config(config, section, prop_name)
 
   def __get_global_prop(self, section, prop_name):
@@ -117,7 +119,7 @@ class ScriptSettings:
       Finds a property value in configs/global-configuration.cfg.
     """
     config = ConfigParser()
-    config.read(self.GLOBAL_CONFIG_LOCATION)
+    config.read(self.global_config_location)
     return self.__get_value_from_config(config, section, prop_name)
 
   def __get_value_from_config(self, config, section, prop_name):

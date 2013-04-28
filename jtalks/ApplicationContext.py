@@ -1,4 +1,5 @@
 import os
+from jtalks.util.Logger import Logger
 from jtalks.DB import DB
 from jtalks.DeployToTomcatFacade import DeployToTomcatFacade
 from jtalks.Nexus import Nexus
@@ -22,12 +23,13 @@ class ApplicationContext:
     Carries similar ideas to Spring's AppContext - it builds all the objects. This IoC is manual though, the objects
     are all constructed manually in Python code.
   """
-
+  logger = Logger("ApplicationContext")
   def __init__(self, environment, project, build, grab_envs, work_dir=None):
     """
     @param work_dir - needed if you'd like to override a default work dir where all files reside, see ScriptSettings
                       for more details
     """
+    self.logger.info("Script was started from [{}] directory", os.curdir)
     self.script_settings = ScriptSettings(build=build, project=project, env=environment, grab_envs=grab_envs,
                                           work_dir=work_dir)
     self.script_settings.create_work_dir_if_absent()
