@@ -22,7 +22,7 @@ class Backuper:
       @param db_operations instance of DbOperations
     """
     if not backup_folder.endswith("/"):
-      raise ValueError("Folder name should finish with '/'")
+      raise ValueError("Folder name should finish with '/'. Actual value: " + backup_folder)
     self.root_backup_folder = backup_folder
     self.script_settings = script_settings
     self.db_operations = db_operations
@@ -56,7 +56,7 @@ class Backuper:
     """
     now = datetime.now().strftime(self.BACKUP_FOLDER_DATE_FORMAT)
 
-    final_backup_folder = "{0}{1}/{2}/{3}".format(backup_folder, script_settings.env, script_settings.project, now)
+    final_backup_folder = "{0}/{1}".format(self.get_project_backup_folder(), now)
     os.makedirs(final_backup_folder)
     self.logger.info("Backing up old resources to [{0}]", final_backup_folder)
     return final_backup_folder

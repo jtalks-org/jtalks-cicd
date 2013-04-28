@@ -22,6 +22,3 @@ class ApplicationContextTest(unittest.TestCase):
     self.assertTrue(isinstance(tomcat.backuper, Backuper))
 
 
-if __name__ == '__main__':
-  unittest.main()
-

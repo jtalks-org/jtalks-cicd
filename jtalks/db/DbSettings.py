@@ -28,7 +28,7 @@ class DbSettings:
     """
     if not os.path.exists(config_file_path):
       self.logger.error("Config file not found: [{0}]", config_file_path)
-      raise ValueError
+      raise ValueError("Config file not found: " + config_file_path)
     configs_doc = parse(config_file_path)
     env_elements = configs_doc.getElementsByTagName('Environment')
 
