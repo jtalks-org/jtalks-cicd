@@ -23,8 +23,13 @@ class ApplicationContext:
     are all constructed manually in Python code.
   """
 
-  def __init__(self, environment, project, build, grab_envs):
-    self.script_settings = ScriptSettings(build=build, project=project, env=environment, grab_envs=grab_envs)
+  def __init__(self, environment, project, build, grab_envs, work_dir=None):
+    """
+    @param work_dir - needed if you'd like to override a default work dir where all files reside, see ScriptSettings
+                      for more details
+    """
+    self.script_settings = ScriptSettings(build=build, project=project, env=environment, grab_envs=grab_envs,
+                                          work_dir=work_dir)
     self.script_settings.create_work_dir_if_absent()
     self.script_settings.log_settings()
 

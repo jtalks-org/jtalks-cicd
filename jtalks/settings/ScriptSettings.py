@@ -7,21 +7,23 @@ __author__ = 'stanislav bashkirtsev'
 
 class ScriptSettings:
   SCRIPT_TEMD_DIR = '/tmp/jtalks-cicd/'
-  SCRIPT_WORK_DIR = "" + os.path.expanduser("~/.jtalks/")
-  BACKUPS_DIR = SCRIPT_WORK_DIR + "backups/"
-  ENV_CONFIGS_DIR = SCRIPT_WORK_DIR + "environments/"
+  script_work_dir = "" + os.path.expanduser("~/.jtalks/")
+  backups_dir = script_work_dir + "backups/"
+  ENV_CONFIGS_DIR = script_work_dir + "environments/"
   GLOBAL_CONFIG_LOCATION = ENV_CONFIGS_DIR + "global-configuration.cfg"
   logger = Logger("ScriptSettings")
 
-  def __init__(self, build, project=None, env=None, grab_envs=None):
+  def __init__(self, build, project=None, env=None, grab_envs=None, work_dir=None):
     """
      @param grab_envs - whether or not we should clone JTalks predefined environment configuration from private git
      repo
+     @param work_dir - standard is ~/.jtalks, but it may be useful to override this value, e.g. during tests
     """
     self.env = env
     self.build = build
     self.project = project
     self.grab_envs = grab_envs
+    self.script_work_dir = work_dir
 
   def log_settings(self):
     self.logger.info("Script Settings: project=[{0}], env=[{1}], build number=[{2}]",
@@ -29,7 +31,7 @@ class ScriptSettings:
     self.logger.info("Environment configuration: [{0}]", self.ENV_CONFIGS_DIR)
 
   def create_work_dir_if_absent(self):
-    self.__create_dir_if_absent__(self.SCRIPT_WORK_DIR)
+    self.__create_dir_if_absent__(self.script_work_dir)
     self.__create_dir_if_absent__(self.get_env_configs_dir())
     self.__create_dir_if_absent__(self.get_backup_folder())
 
@@ -65,7 +67,7 @@ class ScriptSettings:
     raise RuntimeError("tomcat port parsing is not implemented yet")
 
   def get_backup_folder(self):
-    return self.BACKUPS_DIR
+    return self.backups_dir
 
   def get_env_configs_dir(self):
     return self.ENV_CONFIGS_DIR
