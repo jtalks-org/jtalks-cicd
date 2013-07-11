@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from optparse import OptionParser
+import os
 import sys
 import traceback
 from jtalks.ApplicationContext import ApplicationContext
@@ -21,7 +22,8 @@ logger = Logger("entry-point")
 def main():
   (options, args) = get_project_and_build_from_arguments()
   command = args[0]
-  app_context = ApplicationContext(options.env, options.project, options.build, options.grab_envs)
+  app_context = ApplicationContext(options.env, options.project, options.build, options.grab_envs,
+                                   os.path.expanduser("~/.jtalks"))
   try:
     if command == "deploy":
       LibVersion().log_lib_versions()
