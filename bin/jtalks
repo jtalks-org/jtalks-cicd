@@ -39,7 +39,7 @@ def main():
   except Exception:
     logger.error("Program finished with errors")
     if options.debug:
-      logger.error("Root cause: %s" % traceback.format_exc())
+      print("Root cause: %s" % traceback.format_exc())
     sys.exit(1)
 
 
