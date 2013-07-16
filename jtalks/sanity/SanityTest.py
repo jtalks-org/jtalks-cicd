@@ -35,7 +35,7 @@ class SanityTest:
     request_address = "http://{0}:{1}/{2}".format(self.HOST, self.port, self.app_name)
     self.logger.info("Running sanity tests to check whether application started correctly and responds back..")
     self.logger.info("Connecting to {0}", request_address)
-    response = requests.get(request_address, timeout=50)
+    response = requests.get(request_address, timeout=120)
     if response.status_code not in [200, 201]:
       self.logger.error("While accessing main page, app answered with error: [{0} {1} {2}]",
                         response.status_code, response.reason, response.text)
