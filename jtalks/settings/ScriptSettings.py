@@ -13,7 +13,8 @@ class ScriptSettings:
   GLOBAL_CONFIG_LOCATION = ENV_CONFIGS_DIR + "global-configuration.cfg"
   logger = Logger("ScriptSettings")
 
-  def __init__(self, build, project=None, env=None, grab_envs=None, work_dir=None, sanity_test_timeout_sec=120):
+  def __init__(self, build, project=None, env=None, grab_envs=None, work_dir=None, sanity_test_timeout_sec=120,
+               package_version=None):
     """
      @param grab_envs - whether or not we should clone JTalks predefined environment configuration from private git
      repo
@@ -27,10 +28,12 @@ class ScriptSettings:
     self.grab_envs = grab_envs
     self.script_work_dir = work_dir
     self.sanity_test_timeout_sec = sanity_test_timeout_sec
+    self.package_version = package_version
 
   def log_settings(self):
-    self.logger.info("Script Settings: project=[{0}], env=[{1}], build number=[{2}], sanity test timeout=[{3}]",
-                     self.project, self.env, self.build, self.sanity_test_timeout_sec)
+    self.logger.info(
+      "Script Settings: project=[{0}], env=[{1}], build number=[{2}], sanity test timeout=[{3}], package version=[{4}]",
+      self.project, self.env, self.build, self.sanity_test_timeout_sec, self.package_version)
     self.logger.info("Environment configuration: [{0}]", self.ENV_CONFIGS_DIR)
 
   def create_work_dir_if_absent(self):

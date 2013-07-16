@@ -6,13 +6,14 @@ import traceback
 from jtalks.ApplicationContext import ApplicationContext
 from jtalks.util.LibVersion import LibVersion
 from jtalks.util.Logger import Logger
+from jtalks import __version__
 
 __author__ = 'stanislav bashkirtsev'
 
 """
   This script downloads the artifact from Nexus (only project name and build number is enough because it's unique)
-  and deploys the artifact to the Tomcat. 
-  
+  and deploys the artifact to the Tomcat.
+
   Run: python [scriptname].py -h to get list of options.
 """
 logger = Logger("entry-point")
@@ -21,8 +22,11 @@ logger = Logger("entry-point")
 def main():
   (options, args) = get_project_and_build_from_arguments()
   command = args[0]
+  if command == 'version':
+    print __version__
+    exit(0)
   app_context = ApplicationContext(options.env, options.project, options.build, options.grab_envs,
-                                   os.path.expanduser("~/.jtalks"), options.sanity_test_timeout_sec)
+                                   os.path.expanduser("~/.jtalks"), options.sanity_test_timeout_sec, version=__version__)
   try:
     if command == "deploy":
       LibVersion().log_lib_versions()

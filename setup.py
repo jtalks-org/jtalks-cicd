@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 from distutils.core import setup
 from setuptools import find_packages
+from jtalks import __version__
 
 __author__ = 'stanislav bashkirtsev'
 
 setup(name='jtalks-cicd',
-      version='1.2.0',
+      version=__version__,
       description='Installs JTalks apps like jcommune and poulpe configuring them. Usually used by CI to implement CD (continuous delivery)',
       author='Stanislav Bashkirtsev',
       author_email='stanislav.bashkirtsev@gmail.com',
