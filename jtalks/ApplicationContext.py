@@ -23,13 +23,13 @@ class ApplicationContext:
     are all constructed manually in Python code.
   """
 
-  def __init__(self, environment, project, build, grab_envs, work_dir=None):
+  def __init__(self, environment, project, build, grab_envs, work_dir=None, sanity_test_timeout_sec=120):
     """
     @param work_dir - needed if you'd like to override a default work dir where all files reside, see ScriptSettings
                       for more details
     """
     self.script_settings = ScriptSettings(build=build, project=project, env=environment, grab_envs=grab_envs,
-                                          work_dir=work_dir)
+                                          work_dir=work_dir, sanity_test_timeout_sec=sanity_test_timeout_sec)
     self.script_settings.create_work_dir_if_absent()
     self.script_settings.log_settings()
 
@@ -59,7 +59,8 @@ class ApplicationContext:
 
   def sanity_test(self):
     http_port = self.tomcat_server_xml().http_port()
-    return SanityTest(tomcat_port=http_port, app_name=self.script_settings.get_app_final_name())
+    return SanityTest(tomcat_port=http_port, app_name=self.script_settings.get_app_final_name(),
+                      sanity_test_timeout_sec=self.script_settings.get_sanity_test_timeout_sec())
 
   def tomcat_server_xml(self):
     return TomcatServerXml.fromfile(self.script_settings.get_tomcat_location() + "/conf/server.xml")

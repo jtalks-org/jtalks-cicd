@@ -4,7 +4,6 @@ import os
 import sys
 import traceback
 from jtalks.ApplicationContext import ApplicationContext
-from jtalks.DeployToTomcatFacade import DeployToTomcatFacade
 from jtalks.util.LibVersion import LibVersion
 from jtalks.util.Logger import Logger
 
@@ -23,7 +22,7 @@ def main():
   (options, args) = get_project_and_build_from_arguments()
   command = args[0]
   app_context = ApplicationContext(options.env, options.project, options.build, options.grab_envs,
-                                   os.path.expanduser("~/.jtalks"))
+                                   os.path.expanduser("~/.jtalks"), options.sanity_test_timeout_sec)
   try:
     if command == "deploy":
       LibVersion().log_lib_versions()
@@ -61,6 +60,9 @@ def get_project_and_build_from_arguments():
   parser.add_option('-g', "--grab-envs", dest="grab_envs", default="false",
                     help='Whether or not to clone configs from JTalks Git repository, '
                          'requires appropriate SSH access allowed. Possible values - true and false. False by default')
+  parser.add_option('-t', '--sanity-test-timeout-sec', dest='sanity_test_timeout_sec', default=120,
+                    help='After the app is deployed, scripts check whether it was deployed successfully by sending an '
+                         'HTTP request. This argument says for how long to wait before we consider the deployment failed.')
   parser.add_option("-d", "--debug", dest="debug", default="off",
                     help="Whether to show additional errors and logs or not. Possible values: on/off.")
   (options, args) = parser.parse_args()
@@ -68,6 +70,7 @@ def get_project_and_build_from_arguments():
     logger.error("No command was specified, you can use: [deploy], [upload-to-nexus]")
     sys.exit(1)
   return (options, args)
+
 
 """Starting the script by invoking main() method """
 if __name__ == "__main__":

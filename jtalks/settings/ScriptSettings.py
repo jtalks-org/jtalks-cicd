@@ -13,21 +13,24 @@ class ScriptSettings:
   GLOBAL_CONFIG_LOCATION = ENV_CONFIGS_DIR + "global-configuration.cfg"
   logger = Logger("ScriptSettings")
 
-  def __init__(self, build, project=None, env=None, grab_envs=None, work_dir=None):
+  def __init__(self, build, project=None, env=None, grab_envs=None, work_dir=None, sanity_test_timeout_sec=120):
     """
      @param grab_envs - whether or not we should clone JTalks predefined environment configuration from private git
      repo
      @param work_dir - standard is ~/.jtalks, but it may be useful to override this value, e.g. during tests
+     @param sanity_test_timeout_sec - how much time do sanity tests wait for the application to respond until they
+            consider deployment as failed
     """
     self.env = env
     self.build = build
     self.project = project
     self.grab_envs = grab_envs
     self.script_work_dir = work_dir
+    self.sanity_test_timeout_sec = sanity_test_timeout_sec
 
   def log_settings(self):
-    self.logger.info("Script Settings: project=[{0}], env=[{1}], build number=[{2}]",
-                     self.project, self.env, self.build)
+    self.logger.info("Script Settings: project=[{0}], env=[{1}], build number=[{2}], sanity test timeout=[{3}]",
+                     self.project, self.env, self.build, self.sanity_test_timeout_sec)
     self.logger.info("Environment configuration: [{0}]", self.ENV_CONFIGS_DIR)
 
   def create_work_dir_if_absent(self):
@@ -131,3 +134,9 @@ class ScriptSettings:
       Replaces placeholder for env and project that were possibly set in config files.
     """
     return prop_value.replace("${env}", self.env).replace("${project}", self.project)
+
+  def get_sanity_test_timeout_sec(self):
+    """
+      How much time do sanity tests wait for the application response until they consider that the app didn't start
+    """
+    self.sanity_test_timeout_sec
