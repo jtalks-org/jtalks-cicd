@@ -74,7 +74,8 @@ class Tomcat:
 
     self.logger.info("Putting [{0}] into [{1}]", conf_file_location, final_conf_location)
     shutil.copyfile(conf_file_location, final_conf_location)
-    shutil.copy(ehcache_config_file_location, self.script_settings.get_tomcat_location() + "/conf")
+    if os.path.exists(ehcache_config_file_location):
+      shutil.copy(ehcache_config_file_location, self.script_settings.get_tomcat_location() + "/conf")
 
   def start(self):
     """

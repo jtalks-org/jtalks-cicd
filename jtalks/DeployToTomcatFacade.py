@@ -24,6 +24,6 @@ class DeployToTomcatFacade:
     if script_settings.build is None:
       self.logger.error("Build number was not specified, see [{0}] to get list of builds", self.NEXUS_URL)
       raise RuntimeError
-    if script_settings.project not in ["jcommune", "poulpe"]:
-      self.logger.error("A correct project should be specified: [poulpe, jcommune]")
+    if script_settings.project not in ["jcommune", "poulpe", "antarcticle"]:
+      self.logger.error("A correct project should be specified: [poulpe, jcommune, antarcticle]")
       raise RuntimeError
