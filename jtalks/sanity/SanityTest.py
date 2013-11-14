@@ -15,7 +15,7 @@ class SanityTest:
     whether they return HTML. If let's say they return HTTP 500, then the test failed. It has to break CI builds.
   """
   HOST = "127.0.0.1"
-  SLEEP_TIME = 5
+  SLEEP_TIME = 10
   logger = Logger("SanityTest")
   port = None
   app_name = None
