@@ -81,6 +81,8 @@ class NexusPageWithVersions(sgmllib.SGMLParser):
 
   def version(self, build_number):
     for link in self.hyperlinks:
-      if link.endswith(".{0}".format(build_number + "/")): return link
+      #project-x.y.BUILD_NUMBER - old format, project-x.y.BUILD_NUMBER.git_hash - new format
+      if ".{0}/".format(build_number) in link or \
+              ".{0}.".format(build_number) in link: return link
     raise Exception(
       "Couldn't find a build number {0}. Here are all the links: {1}".format(build_number, self.hyperlinks))
