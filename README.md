@@ -9,6 +9,7 @@ should be installed and after that you just log onto machine `vagrant ssh` and s
 This project contains JTalks Environment configuration like DEV, UAT, PROD. To use it you'll need python to be installed (was checked on 2.6.6) and:
 * `apt-get install python-dev libmysqlclient-dev`
 * `apt-get install python-pip; pip install -U pip` - python package manager to install other python-related packages
+* `pip install http://cdn.mysql.com/Downloads/Connector-Python/mysql-connector-python-1.1.4.zip` - this is a hack, but it became impossible to specify the connector via distutils require_installs because it moved to an external site and pip throws error because it doesn't trust to it.
 * `pip install jtalks-cicd`
 
 ###User Guide:
