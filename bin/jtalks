@@ -21,12 +21,14 @@ logger = Logger("entry-point")
 
 def main():
   (options, args) = get_project_and_build_from_arguments()
+  logger.info("Script Params: {0}", options)
   command = args[0]
   if command == 'version':
     print __version__
     exit(0)
   app_context = ApplicationContext(options.env, options.project, options.build, options.grab_envs,
-                                   os.path.expanduser("~/.jtalks"), options.sanity_test_timeout_sec, version=__version__)
+                                   os.path.expanduser("~/.jtalks"), options.sanity_test_timeout_sec,
+                                   version=__version__)
   try:
     if command == "deploy":
       LibVersion().log_lib_versions()
@@ -67,6 +69,11 @@ def get_project_and_build_from_arguments():
   parser.add_option('-t', '--sanity-test-timeout-sec', dest='sanity_test_timeout_sec', default=120,
                     help='After the app is deployed, scripts check whether it was deployed successfully by sending an '
                          'HTTP request. This argument says for how long to wait before we consider the deployment failed.')
+  parser.add_option('-s', '--sanity-test-sleep-sec', dest='sanity_test_sleep_sec', default=30,
+                    help='The amount of time tests ignore error responses as deployment failure. This is needed because '
+                         'first tomcat may not start quickly and therefore the response Connection Refused will be '
+                         'immediate. Thus when we send requests, first we should treat error messages as possible '
+                         'responses. After this sleep time error responses are considered as failed deployment.')
   parser.add_option("-d", "--debug", dest="debug", default="off",
                     help="Whether to show additional errors and logs or not. Possible values: on/off.")
   (options, args) = parser.parse_args()
