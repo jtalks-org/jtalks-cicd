@@ -1,6 +1,5 @@
-import time
-
 import requests
+from requests.exceptions import ConnectionError
 
 from jtalks.sanity.SanityCheckFailedException import SanityCheckFailedException
 from jtalks.util.Logger import Logger
@@ -46,7 +45,10 @@ class SanityTest:
         "[Attempt #{0}] Running sanity tests to check whether application started correctly and responds back..",
         attempt_counter)
       self.logger.info("[Attempt #{0}] Connecting to {1}", attempt_counter, request_address)
-      response = requests.get(request_address, timeout=self.sanity_test_timeout_sec)
+      try:
+        response = requests.get(request_address, timeout=self.sanity_test_timeout_sec)
+      except ConnectionError:
+        continue
       if response.status_code in [200, 201]:
         break
       else:
