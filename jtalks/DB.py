@@ -93,8 +93,6 @@ class DB:
     self.cursor.execute(
       'UPDATE COMPONENTS SET NAME="' + self.jcName + '", DESCRIPTION="' + self.jcDescription + '" where COMPONENT_TYPE="FORUM"')
     self.logger.info("Switching off mail notifications")
-    self.cursor.execute(
-      'UPDATE PROPERTIES SET VALUE="' + self.jcNotify + '" where NAME="jcommune.sending_notifications_enabled"')
     self.cursor.execute('UPDATE PROPERTIES SET VALUE="' + self.jcUrl + '" where NAME="jcommune.url_address"')
     self.cursor.execute('UPDATE USERS SET PASSWORD=MD5(' + self.poulpeAdminPass + ') WHERE USERNAME="admin"')
     self.connection.commit()
