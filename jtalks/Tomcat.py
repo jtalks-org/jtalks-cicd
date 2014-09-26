@@ -68,6 +68,8 @@ class Tomcat:
     Copies configuration files for application and ehcache to Tomcat directories
     """
     final_conf_location = self.get_config_folder_location() + "/" + self.script_settings.get_app_final_name() + ".xml"
+    if not os.path.exists(final_conf_location):
+        os.makedirs(final_conf_location)
     conf_file_location = self.get_config_file_location()
     ehcache_config_file_location = os.path.join(self.script_settings.get_env_configs_dir(), self.script_settings.env,
                                                 self.get_ehcache_config_name())
