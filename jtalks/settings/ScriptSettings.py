@@ -6,8 +6,8 @@ __author__ = 'stanislav bashkirtsev'
 
 
 class ScriptSettings:
-  SCRIPT_TEMD_DIR = '/tmp/jtalks-cicd/'
   script_work_dir = "" + os.path.expanduser("~/.jtalks/")
+  script_temp_dir = os.path.join(script_work_dir, 'temp')
   backups_dir = script_work_dir + "backups/"
   ENV_CONFIGS_DIR = script_work_dir + "environments/"
   GLOBAL_CONFIG_LOCATION = ENV_CONFIGS_DIR + "global-configuration.cfg"
@@ -62,7 +62,7 @@ class ScriptSettings:
     """
      Script can save there some temp files.
     """
-    return self.SCRIPT_TEMD_DIR
+    return self.script_temp_dir
 
   def get_tomcat_port(self):
     """
