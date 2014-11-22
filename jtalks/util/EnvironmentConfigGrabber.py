@@ -23,11 +23,12 @@ class EnvironmentConfigGrabber:
       self.__create_jtalks_temp_dir__()
       repo.Repo.clone_from('git@jtalks.org:environments', self.clone_repo_to)
       self.__copy_grabbed_configs_into_work_dir__()
-    except GitCommandError:
+    except GitCommandError as e:
       self.logger.warn("You don't have access to JTalks repo with environment configs. You may want to use your own "
                        + "local environment. Create a folder with env name in configs directory. If you think you "
                        + "need access to JTalks internal envs (including UAT, DEV, PREPROD, PROD envs), "
                        + "you should write a request to project@jtalks.org.")
+      raise e
 
   def __remove_previous_git_folder__(self):
     try:
