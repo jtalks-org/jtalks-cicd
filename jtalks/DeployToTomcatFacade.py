@@ -14,8 +14,6 @@ class DeployToTomcatFacade:
     script_settings = self.app_context.script_settings
     self.__raise_if_settings_not_specified__(script_settings)
 
-    if script_settings.grab_envs == "true":
-      self.app_context.environment_config_grabber().grab_jtalks_configs()
     self.app_context.nexus().download_war(project=self.app_context.script_settings.project)
     self.app_context.tomcat().deploy_war()
     self.app_context.sanity_test().check_app_started_correctly()
