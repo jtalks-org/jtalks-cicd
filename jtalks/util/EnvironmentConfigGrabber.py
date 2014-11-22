@@ -13,8 +13,8 @@ class EnvironmentConfigGrabber:
   def __init__(self, env_configs_root, temp_dir):
     self.env_configs_root = env_configs_root
     self.temp_dir = temp_dir
-    self.clone_repo_to = temp_dir + 'environments'
-    self.grabbed_configs_location = self.clone_repo_to + "/configs"
+    self.clone_repo_to = os.path.join(temp_dir, 'environments')
+    self.grabbed_configs_location = os.path.join(self.clone_repo_to, "configs")
 
 
   def grab_jtalks_configs(self):
