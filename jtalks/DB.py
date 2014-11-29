@@ -15,7 +15,6 @@ class DB:
   dbUser = None
   dbPass = None
   dbName = None
-  dbDefiner = None
   cursor = None
   connection = None
   jcName = None
@@ -33,7 +32,6 @@ class DB:
     self.dbUser = self.config.get('db', 'user')
     self.dbPass = self.config.get('db', 'pass')
     self.dbName = self.config.get('db', 'name')
-    self.dbDefiner = self.config.get('db', 'definer')
     self.jcName = self.config.get('properties', 'jc_name')
     self.jcDescription = self.config.get('properties', 'jc_description')
     self.jcUrl = self.config.get('properties', 'jc_url')
@@ -78,10 +76,12 @@ class DB:
   def fix_definer_in_backup(self, backupPath):
     """
      For MySQL.
-     If database contains VIEWS then created backup of database (by mysqldump) file contains lines with permissions (to
-    user from origin database). When we restoring database to another server(it server don't have it user) we get a ERROR. To fix this problem, before restore we need replace all entries  (with DEFINER='{username}') to MySQL constant CURRENT_USER. This constant indicates that the law should give to the user on whose behalf is restored.
+     If database contains VIEWS then created backup of database (by mysqldump) file contains lines with permissions
+     (to user from original database). When we restoring database on another server (the server that doesn't have
+     that user) we get an ERROR. To fix this problem, before restore we need remove all entries
+     (with DEFINER='{username}') and the view will be created and will be invoked by the user that created the DB.
     """
-    os.popen('sed -i \'s/DEFINER=' + self.dbDefiner + '/DEFINER=CURRENT_USER/g\' ' + backupPath).read()
+    os.popen("sed -i 's/DEFINER=[^*]*\*/\*/g' " + backupPath).read()
     self.logger.info("Database definer fixed: environment=[{0}]".format(self.env))
 
   def update_properties_to_preprod(self):
@@ -90,8 +90,8 @@ class DB:
     """
     self.cursor.execute('USE ' + self.dbName)
     self.logger.info("Changing forum name to [{0}]", self.jcName)
-    self.cursor.execute(
-      'UPDATE COMPONENTS SET NAME="' + self.jcName + '", DESCRIPTION="' + self.jcDescription + '" where COMPONENT_TYPE="FORUM"')
+    self.cursor.execute('UPDATE COMPONENTS SET NAME="' + self.jcName + '", DESCRIPTION="' + self.jcDescription
+                        + '" where COMPONENT_TYPE="FORUM"')
     self.logger.info("Switching off mail notifications")
     self.cursor.execute('UPDATE PROPERTIES SET VALUE="' + self.jcUrl + '" where NAME="jcommune.url_address"')
     self.cursor.execute('UPDATE USERS SET PASSWORD=MD5(' + self.poulpeAdminPass + ') WHERE USERNAME="admin"')
