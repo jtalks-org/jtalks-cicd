@@ -38,7 +38,9 @@ class SSH:
       if attrTimeTmp < attr.st_mtime:
         attrTimeTmp = attr.st_mtime
         dirWithLastUpdate = attr.filename
-    self.sftpClient.get(dirWithLastUpdate + '/' + self.sftpBackupArchive, './' + self.sftpBackupArchive)
+    fileFromFtp = dirWithLastUpdate + '/' + self.sftpBackupArchive
+    self.logger.info('Downloading file from ftp [{0}]', fileFromFtp)
+    self.sftpClient.get(fileFromFtp, './' + self.sftpBackupArchive)
     os.popen('bunzip2 -d ' + self.sftpBackupArchive)
     self.sftp_connection_close()
 

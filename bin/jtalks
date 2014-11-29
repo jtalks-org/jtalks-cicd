@@ -41,6 +41,7 @@ def main():
     elif command == "list-envs":
       app_context.env_list().list_envs()
     elif command == "load-db-from-backup":
+      LibVersion().log_lib_versions()
       app_context.load_db_from_backup().load()
     else:
       logger.error("Command was not recognized, you can use: [deploy], [upload-to-nexus]")
