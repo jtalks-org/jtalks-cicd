@@ -52,7 +52,7 @@ class DbOperations:
     """
     self.logger.info("Backing up database [{0}] to [{1}] using user [{2}]",
                      self.db_settings.dbName, backupPath, self.db_settings.dbUser)
-    os.popen("mysqldump -u{0} -p{1} {2} > {3}/{2}.sql"
+    os.popen("mysqldump -u'{0}' -p'{1}' '{2}' > '{3}/{2}.sql'"
       .format(self.db_settings.dbUser, self.db_settings.dbPass, self.db_settings.dbName, backupPath)) \
       .read()
     self.logger.info("Database backed up: environment=[{0}]".format(self.env))
@@ -63,7 +63,7 @@ class DbOperations:
     """
     self.logger.info("Loading a db dump from [{0}/{1}.sql]", backupPath, self.db_settings.dbName)
     self.recreate_database()
-    os.popen('mysql -u{0} -p{1} {2} < {3}/{2}.sql'
+    os.popen("mysql -u'{0}' -p'{1}' '{2}' < '{3}/{2}.sql'"
       .format(self.db_settings.dbUser,self.db_settings.dbPass, self.db_settings.dbName, backupPath))\
       .read()
     self.logger.info("Database restored: environment=[{0}]".format(self.env))
