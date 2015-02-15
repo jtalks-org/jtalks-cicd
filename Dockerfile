@@ -16,8 +16,9 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py \
 USER jtalks
 WORKDIR /home/jtalks/jtalks-cicd
 
-RUN mkdir /home/jtalks/.pip-packages \
- && ./setup.py install --user  \
+RUN ./setup.py install --user  \
  && cp -r tests/.jtalks /home/jtalks/
+
+ENV PYTHONUNBUFFERED=1
 
 CMD ["./setup.py", "test"]
