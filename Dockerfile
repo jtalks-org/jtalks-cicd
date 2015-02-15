@@ -13,11 +13,12 @@ ADD . /home/jtalks/jtalks-cicd
 RUN chown -R jtalks ~jtalks
 RUN wget -q https://bootstrap.pypa.io/get-pip.py && python get-pip.py \
 # stupid setuptools doesn't seem to have a way to --allow-external inside of itself
- && pip install --allow-external mysql-connector-python mysql-connector-python \
- && wget -q https://bootstrap.pypa.io/ez_setup.py && python ez_setup.py
+ && pip install --allow-external mysql-connector-python mysql-connector-python
 
+USER jtalks
+ENV HOME /home/jtalks
 WORKDIR /home/jtalks/jtalks-cicd
-RUN ./setup.py install
+RUN wget -q https://bootstrap.pypa.io/ez_setup.py && python ez_setup.py --user && ./setup.py install
 
-RUN cp -r /home/jtalks/jtalks-cicd/tests/.jtalks /root/
+RUN cp -r tests/.jtalks ~/
 CMD ["./setup.py", "test"]
