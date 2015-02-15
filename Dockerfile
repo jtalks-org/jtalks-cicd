@@ -19,6 +19,5 @@ RUN wget -q https://bootstrap.pypa.io/get-pip.py && python get-pip.py \
 WORKDIR /home/jtalks/jtalks-cicd
 RUN ./setup.py install
 
-USER jtalks
-RUN cp -r tests/.jtalks /home/jtalks/
+RUN cp -r /home/jtalks/jtalks-cicd/tests/.jtalks /root/
 CMD ["./setup.py", "test"]
