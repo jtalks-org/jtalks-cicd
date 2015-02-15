@@ -1,6 +1,8 @@
 FROM ubuntu:14.04
 MAINTAINER Stanislav Bashkyrtsev <stanislav.bashkirtsev@gmail.com>
 
+ENV PYTHONUNBUFFERED=1
+
 RUN apt-get -qy install software-properties-common \
  && add-apt-repository ppa:fkrull/deadsnakes \
  && apt-get update \
@@ -16,9 +18,7 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py \
 USER jtalks
 WORKDIR /home/jtalks/jtalks-cicd
 
-RUN ./setup.py install --user  \
+RUN ./setup.py install --user \
  && cp -r tests/.jtalks /home/jtalks/
-
-ENV PYTHONUNBUFFERED=1
 
 CMD ["./setup.py", "test"]
