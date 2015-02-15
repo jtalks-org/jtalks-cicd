@@ -1,7 +1,7 @@
 FROM ubuntu:14.04
 MAINTAINER Stanislav Bashkyrtsev <stanislav.bashkirtsev@gmail.com>
 
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED 1
 
 RUN apt-get -qy install software-properties-common \
  && add-apt-repository ppa:fkrull/deadsnakes \
