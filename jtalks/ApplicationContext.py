@@ -1,7 +1,7 @@
 import os
 from jtalks.DB import DB
 from jtalks.DeployToTomcatFacade import DeployToTomcatFacade
-from jtalks.Nexus import Nexus
+from jtalks.OldNexus import Nexus
 from jtalks.SSH import SSH
 from jtalks.Tomcat import Tomcat
 from jtalks.backup.Backuper import Backuper

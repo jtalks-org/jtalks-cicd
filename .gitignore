@@ -2,7 +2,6 @@
 backups/*
 configs/local/*
 configs/*
-!configs/unit-test
 !configs/example
 .idea
 dist

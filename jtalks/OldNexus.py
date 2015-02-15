@@ -1,6 +1,8 @@
 import urllib
 import sgmllib
+import os
 
+from jtalks.parser.PomFile import PomFile
 from jtalks.util.Logger import Logger
 
 
@@ -10,19 +12,38 @@ class Nexus:
     to be passed into the constructor. Other properties may or may not be required (some of them can be determined,
     like project name and version by pom.xml).
     """
-    nexus_url = 'http://repo.jtalks.org/content/repositories/'
-    repo = 'builds'
-    common_group_id = 'org/jtalks'
-    logger = Logger("Nexus")
+    base_url = "http://repo.jtalks.org/content/repositories/deployment-pipeline/"
+    logger = Logger("OldNexus")
 
-    def __init__(self, build_number, project):
+    def __init__(self, build_number):
         self.build_number = build_number
 
+    def upload_war(self, pom_file_location):
+        """
+          Uploads a war to the Nexus. The path to pom.xml is acceptaced as an argument, by this path
+          we also determean where war file is placed.
+        """
+        pom = PomFile(pom_file_location)
+        artifact_version = pom.version()
+        artifact_id = pom.artifact_id()
+
+        maven_deploy_command = ("mvn deploy:deploy-file -Durl={2} " +
+                                "-DrepositoryId=deployment-pipeline -DgroupId=deployment-pipeline -DartifactId={0} -Dpackaging=war " +
+                                "-Dfile={0}-view/{0}-web-view/target/{0}.war -Dversion={1}"
+        ).format(artifact_id, artifact_version, self.base_url)
+        print maven_deploy_command
+
+        return_code = os.system(maven_deploy_command)
+        if (return_code != 0):
+            self.logger.error("Maven returned error code: " + str(return_code))
+            raise Exception("Maven returned error code: " + str(return_code))
+
     def download_war(self, project):
-        self.logger.info('Looking up build #{0} for {1} project', self.build_number, project)
+        self.logger.info("Looking up build #{0} for {1} project", self.build_number, project)
         war_url = self.get_war_url(project, self.build_number)
-        self.logger.info('Downloading artifact: [{0}]', war_url)
+        self.logger.info("Downloading artifact: [{0}]", war_url)
         urllib.urlretrieve(war_url, project + ".war")
+
 
     def get_war_url(self, project, build_number):
         group_id = "deployment-pipeline/"
