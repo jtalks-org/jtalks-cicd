@@ -9,11 +9,15 @@ RUN apt-get -qy install software-properties-common \
 RUN useradd -d /home/jtalks -M -N -g nogroup -r jtalks && mkdir ~jtalks
 ADD . /home/jtalks/jtalks-cicd
 RUN chown -R jtalks ~jtalks
-RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py
+RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py \
+# stupid setuptools doesn't seem to have a way to --allow-external inside of itself
+ && pip install --allow-external mysql-connector-python mysql-connector-python
 
 USER jtalks
 WORKDIR /home/jtalks/jtalks-cicd
-RUN mkdir ~/.pip-packages
 ENV PYTHONPATH=$PYTHONPATH:/home/jtalks/.pip-packages:.:tests
-RUN ./setup.py --help install && ./setup.py install --user --install-lib=~/.pip-packages && cp -r tests/.jtalks ~/
+RUN mkdir /home/jtalks/.pip-packages \
+ && ./setup.py install --user --install-lib=/home/jtalks/.pip-packages \
+ && cp -r tests/.jtalks /home/jtalks/
+
 CMD ["./setup.py", "test"]
