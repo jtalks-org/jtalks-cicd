@@ -1,7 +1,7 @@
 import os
 from unittest import TestCase
 
-from Nexus import Gav, Nexus
+from jtalks.Nexus import Gav, Nexus
 
 
 class NexusTest(TestCase):
