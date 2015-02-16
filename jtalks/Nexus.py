@@ -10,26 +10,40 @@ class Nexus:
     to be passed into the constructor. Other properties may or may not be required (some of them can be determined,
     like project name and version by pom.xml).
     """
-    nexus_url = 'http://repo.jtalks.org/content/repositories/'
-    repo = 'builds'
-    common_group_id = 'org/jtalks'
     logger = Logger("Nexus")
 
-    def __init__(self, build_number):
-        self.build_number = build_number
+    def __init__(self, nexus='http://repo.jtalks.org/content/repositories/'):
+        self.nexus_url = nexus
 
-    def download_war(self, project):
-        self.logger.info('Looking up build #{0} for {1} project', self.build_number, project)
-        war_url = self.get_war_url(project, self.build_number)
-        self.logger.info('Downloading artifact: [{0}]', war_url)
-        urllib.urlretrieve(war_url, project + ".war")
+    def download(self, repo, gav, tofile_path):
+        """
+        :param repo - str
+        :param gav - Gav
+        :param tofile_path str
+        """
+        url = self.nexus_url + repo + '/' + gav.to_repo_path()
+        self.logger.info('Downloading artifact: [{0}]', url)
+        urllib.urlretrieve(url, tofile_path)
 
-    def get_war_url(self, project, build_number):
-        group_id = "deployment-pipeline/"
-        artifact_version_url = NexusPageWithVersions().parse(self.base_url + group_id + project).version(build_number)
-        # get version by URL (last part is something like /jcommune/12.3.123/)
-        artifact_version = artifact_version_url.rpartition(project + "/")[2].replace("/", "")
-        return (artifact_version_url + "{0}-{1}.war".format(project, artifact_version))
+
+class Gav:
+    def __init__(self, artifact_id, group_id, version, classifier='', extension='jar'):
+        self.artifact_id = artifact_id
+        self.group_id = group_id
+        self.version = version
+        self.classifier = classifier
+        self.extension = extension
+
+    def to_str(self):
+        return '{0}:{1}:{2}:{3}:{4}' \
+            .format(self.group_id, self.artifact_id, self.version, self.classifier, self.extension)
+
+    def to_repo_path(self):
+        classifier = ''
+        if self.classifier:
+            classifier = '-' + self.classifier
+        return '{0}/{1}/{2}/{1}-{2}{3}.{4}' \
+            .format(self.group_id.replace('.', '/'), self.artifact_id, self.version, classifier, self.extension)
 
 
 class NexusPageWithVersions(sgmllib.SGMLParser):
