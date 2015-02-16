@@ -15,7 +15,7 @@ class Nexus:
     common_group_id = 'org/jtalks'
     logger = Logger("Nexus")
 
-    def __init__(self, build_number, project):
+    def __init__(self, build_number):
         self.build_number = build_number
 
     def download_war(self, project):

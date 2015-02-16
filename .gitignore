@@ -1,6 +1,7 @@
 *.pyc
 backups/*
 configs/local/*
+*.war
 configs/*
 !configs/example
 .idea

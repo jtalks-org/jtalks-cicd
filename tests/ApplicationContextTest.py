@@ -12,7 +12,7 @@ class ApplicationContextTest(unittest.TestCase):
     sut = ApplicationContext("system-test", "project1", 510, False, env_config_dir)
 
     def test_nexus_is_created(self):
-        nexus = self.sut.nexus()
+        nexus = self.sut.old_nexus()
         self.assertEquals(nexus.build_number, 510)
 
     def test_tomcat_is_created(self):
