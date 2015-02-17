@@ -1,7 +1,26 @@
+import re
 import urllib
 import sgmllib
 
 from jtalks.util.Logger import Logger
+
+
+class JtalksArtifacts:
+    def __init__(self, repo='builds'):
+        self.repo = repo
+
+    def download_jcommune(self, build):
+        gav = Gav('jcommune-web-view', 'org.jtalks.jcommune', version='', extension='')
+        nexus = Nexus()
+        version_page_url = gav.to_url(nexus.nexus_url, self.repo)
+        version = NexusPageWithVersions().parse(version_page_url).version(build)
+        gav.version = version
+        gav.extension = 'war'
+        nexus.download(self.repo, gav, 'jcommune.war')
+        return 'jcommune.war'
+
+    def download_jc_plugin(self, version, artifact_ids):
+        pass
 
 
 class Nexus:
@@ -39,14 +58,24 @@ class Gav:
             .format(self.group_id, self.artifact_id, self.version, self.classifier, self.extension)
 
     def to_repo_path(self):
-        classifier = ''
-        if self.classifier:
-            classifier = '-' + self.classifier
-        return '{0}/{1}/{2}/{1}-{2}{3}.{4}' \
-            .format(self.group_id.replace('.', '/'), self.artifact_id, self.version, classifier, self.extension)
+        path_pattern = '{0}/{1}'
+        if self.version:
+            path_pattern += '/{2}/{1}-{2}'
+        if self.version and self.classifier:
+            path_pattern += '-{3}'
+        if self.version and self.extension:
+            path_pattern += '.{4}'
+        return path_pattern \
+            .format(self.group_id.replace('.', '/'), self.artifact_id, self.version, self.classifier, self.extension)
+
+    def to_url(self, nexus_url, repo):
+        if not nexus_url.endswith('/'):
+            nexus_url += '/'
+        return nexus_url + repo + '/' + self.to_repo_path()
 
 
 class NexusPageWithVersions(sgmllib.SGMLParser):
+    """ Can parse full versions of the artifacts by build number. """
     hyperlinks = []
 
     def parse(self, url_with_versions):
@@ -65,8 +94,10 @@ class NexusPageWithVersions(sgmllib.SGMLParser):
 
     def version(self, build_number):
         for link in self.hyperlinks:
-            # project-x.y.BUILD_NUMBER - old format, project-x.y.BUILD_NUMBER.git_hash - new format
-            if ".{0}/".format(build_number) in link or \
-                            ".{0}.".format(build_number) in link: return link
+            match = re.search('(http://.*/)([0-9]+\.[0-9]+\.[0-9]+\.\w+)(.*)', link)
+            if match:
+                version = match.group(2)
+                if '.{0}.'.format(build_number) in version:
+                    return version
         raise Exception(
             "Couldn't find a build number {0}. Here are all the links: {1}".format(build_number, self.hyperlinks))
