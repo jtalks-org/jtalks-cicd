@@ -43,10 +43,12 @@ class NexusTest(TestCase):
         os.remove('tmpfile.jar')
 
     def test_download_jcommune(self):
-        filename = JtalksArtifacts().download_jcommune(2)
+        gav, filename = JtalksArtifacts().download_jcommune(2)
         self.assertTrue(os.path.exists(filename))
         self.assertEqual(38996276, os.stat(filename).st_size)
         os.remove(filename)
 
     def test_download_jc_plugin(self):
-        JtalksArtifacts().download_jc_plugin(5, 'questions-n-answers-plugin')
+        gav, filename = JtalksArtifacts().download_jc_plugin('3.0.6.8629f39', 'questions-n-answers-plugin')
+        self.assertTrue(os.path.exists(filename))
+        self.assertEqual(861914, os.stat(filename).st_size)

@@ -17,10 +17,13 @@ class JtalksArtifacts:
         gav.version = version
         gav.extension = 'war'
         nexus.download(self.repo, gav, 'jcommune.war')
-        return 'jcommune.war'
+        return gav, 'jcommune.war'
 
-    def download_jc_plugin(self, version, artifact_ids):
-        pass
+    def download_jc_plugin(self, version, artifact_id):
+        gav = Gav(artifact_id, 'org.jtalks.jcommune', version)
+        tofile_path = artifact_id + '' + gav.extension
+        Nexus().download(self.repo, gav, tofile_path)
+        return gav, tofile_path
 
 
 class Nexus:
