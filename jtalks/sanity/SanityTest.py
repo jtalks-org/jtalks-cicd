@@ -1,13 +1,10 @@
 from time import sleep
+import datetime
+
 import requests
 from requests.exceptions import ConnectionError
-
 from jtalks.sanity.SanityCheckFailedException import SanityCheckFailedException
 from jtalks.util.Logger import Logger
-
-
-__author__ = 'stanislav bashkirtsev'
-import datetime
 
 
 class SanityTest:

@@ -1,6 +1,7 @@
 import urllib
 import sgmllib
 import os
+from Nexus import BuildNotFoundException
 
 from jtalks.parser.PomFile import PomFile
 from jtalks.util.Logger import Logger
@@ -49,7 +50,7 @@ class Nexus:
         artifact_version_url = NexusPageWithVersions().parse(self.base_url + group_id + project).version(build_number)
         # get version by URL (last part is something like /jcommune/12.3.123/)
         artifact_version = artifact_version_url.rpartition(project + "/")[2].replace("/", "")
-        return (artifact_version_url + "{0}-{1}.war".format(project, artifact_version))
+        return artifact_version_url + '{0}-{1}.war'.format(project, artifact_version)
 
 
 class NexusPageWithVersions(sgmllib.SGMLParser):
@@ -74,5 +75,5 @@ class NexusPageWithVersions(sgmllib.SGMLParser):
             # project-x.y.BUILD_NUMBER - old format, project-x.y.BUILD_NUMBER.git_hash - new format
             if ".{0}/".format(build_number) in link or \
                             ".{0}.".format(build_number) in link: return link
-        raise Exception(
+        raise BuildNotFoundException(
             "Couldn't find a build number {0}. Here are all the links: {1}".format(build_number, self.hyperlinks))

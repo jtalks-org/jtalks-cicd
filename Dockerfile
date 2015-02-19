@@ -11,6 +11,8 @@ RUN apt-get -qy install software-properties-common \
  # stupid setuptools doesn't seem to have a way to --allow-external inside of itself
  && pip install --allow-external mysql-connector-python mysql-connector-python
 
+RUN apt-get -qy install mysql-server
+
 RUN useradd -d /home/jtalks -M -N -g nogroup -r jtalks && mkdir ~jtalks
 ADD . /home/jtalks/jtalks-cicd
 RUN chown -R jtalks ~jtalks

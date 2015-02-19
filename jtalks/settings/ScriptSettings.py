@@ -1,5 +1,6 @@
 from ConfigParser import ConfigParser, NoSectionError
 import os
+
 from jtalks.util.Logger import Logger
 
 
@@ -78,6 +79,9 @@ class ScriptSettings:
 
     def get_global_config_location(self):
         return self.GLOBAL_CONFIG_LOCATION
+
+    def get_plugins(self):
+        return ['poulpe-auth-plugin']
 
     def __get_property(self, section, prop_name):
         """

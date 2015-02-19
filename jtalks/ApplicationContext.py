@@ -1,6 +1,7 @@
 import os
-from jtalks.DeployToTomcatFacade import DeployToTomcatFacade
-from jtalks.OldNexus import Nexus
+from jtalks.DeployCommand import DeployCommand
+from jtalks.OldNexus import Nexus as OldNexus
+import jtalks.Nexus as NewNexus
 from jtalks.SSH import SSH
 from jtalks.Tomcat import Tomcat
 from jtalks.backup.Backuper import Backuper
@@ -33,7 +34,10 @@ class ApplicationContext:
         self.script_settings.log_settings()
 
     def old_nexus(self):
-        return Nexus(build_number=self.script_settings.build)
+        return OldNexus(build_number=self.script_settings.build)
+
+    def jtalks_artifacts(self):
+        return NewNexus.JtalksArtifacts()
 
     def tomcat(self):
         return Tomcat(backuper=self.backuper(), script_settings=self.script_settings)
@@ -50,8 +54,8 @@ class ApplicationContext:
         db_settings = DbSettings(project=self.script_settings.project, config_file_location=config_file_location)
         return db_settings
 
-    def deploy_to_tomcat_facade(self):
-        return DeployToTomcatFacade(self)
+    def deploy_command(self):
+        return DeployCommand(self)
 
     def environment_config_grabber(self):
         return EnvironmentConfigGrabber(self.script_settings.get_env_configs_dir(), self.script_settings.get_temp_dir())

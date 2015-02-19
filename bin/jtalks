@@ -3,10 +3,12 @@ from optparse import OptionParser
 import os
 import sys
 import traceback
+
 from jtalks.ApplicationContext import ApplicationContext
 from jtalks.util.LibVersion import LibVersion
 from jtalks.util.Logger import Logger
 from jtalks import __version__
+
 
 """
   This script downloads the artifact from Nexus (only project name and build number is enough because it's unique)
@@ -32,7 +34,7 @@ def main():
     try:
         if command == "deploy":
             LibVersion().log_lib_versions()
-            app_context.deploy_to_tomcat_facade().deploy()
+            app_context.deploy_command().deploy()
         elif command == "upload-to-nexus":
             LibVersion().log_lib_versions()
             app_context.old_nexus().upload_war("pom.xml")
@@ -58,7 +60,7 @@ def get_project_and_build_from_arguments():
     """
     parser = OptionParser()
     parser.add_option("-b", "--build", dest="build",
-                      help="The build number of the Deployment Pipline to deploy a unique artifact to Nexus.")
+                      help="The build number of the Deployment Pipeline to deploy a unique artifact to Nexus.")
     parser.add_option("-p", "--project", dest="project",
                       help="Project name to be deployed to tomcat (e.g. jcommune, poulpe)")
     parser.add_option("-e", "--environment", dest="env",
@@ -81,7 +83,7 @@ def get_project_and_build_from_arguments():
     if len(args) == 0:
         logger.error("No command was specified, you can use: [deploy], [upload-to-nexus]")
         sys.exit(1)
-    return (options, args)
+    return options, args
 
 
 """Starting the script by invoking main() method """

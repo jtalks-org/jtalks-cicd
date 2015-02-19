@@ -9,19 +9,23 @@ class JtalksArtifacts:
     def __init__(self, repo='builds'):
         self.repo = repo
 
-    def download_jcommune(self, build):
-        gav = Gav('jcommune-web-view', 'org.jtalks.jcommune', version='', extension='')
+    def download_war(self, project, build):
+        gav = Gav(project + '-web-view', 'org.jtalks.jcommune', version='', extension='')
         nexus = Nexus()
         version_page_url = gav.to_url(nexus.nexus_url, self.repo)
         version = NexusPageWithVersions().parse(version_page_url).version(build)
         gav.version = version
         gav.extension = 'war'
-        nexus.download(self.repo, gav, 'jcommune.war')
-        return gav, 'jcommune.war'
+        nexus.download(self.repo, gav, project + '.war')
+        return gav, project + '.war'
 
-    def download_jc_plugin(self, version, artifact_id):
-        gav = Gav(artifact_id, 'org.jtalks.jcommune', version)
-        tofile_path = artifact_id + '' + gav.extension
+    def download_plugins(self, project, version, artifact_ids=()):
+        for plugin in artifact_ids:
+            self.download_plugin(project, version, plugin)
+
+    def download_plugin(self, project, version, artifact_id):
+        gav = Gav(artifact_id, 'org.jtalks.' + project, version)
+        tofile_path = artifact_id + '.' + gav.extension
         Nexus().download(self.repo, gav, tofile_path)
         return gav, tofile_path
 
@@ -104,3 +108,8 @@ class NexusPageWithVersions(sgmllib.SGMLParser):
                     return version
         raise Exception(
             "Couldn't find a build number {0}. Here are all the links: {1}".format(build_number, self.hyperlinks))
+
+
+class BuildNotFoundException(Exception):
+    def __init__(self, *args, **kwargs):
+        super(*args, **kwargs)
