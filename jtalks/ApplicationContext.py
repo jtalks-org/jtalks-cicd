@@ -63,7 +63,7 @@ class ApplicationContext:
     def sanity_test(self):
         http_port = self.tomcat_server_xml().http_port()
         return SanityTest(tomcat_port=http_port, app_name=self.script_settings.get_app_final_name(),
-                          sanity_test_timeout_sec=self.script_settings.get_sanity_test_timeout_sec())
+                          sanity_test_timeout_sec=self.script_settings.sanity_test_timeout_sec)
 
     def tomcat_server_xml(self):
         return TomcatServerXml.fromfile(self.script_settings.get_tomcat_location() + "/conf/server.xml")

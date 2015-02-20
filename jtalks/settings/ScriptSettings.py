@@ -128,7 +128,8 @@ class ScriptSettings:
         config.read(self.GLOBAL_CONFIG_LOCATION)
         return self.__get_value_from_config(config, section, prop_name)
 
-    def __get_value_from_config(self, config, section, prop_name):
+    @staticmethod
+    def __get_value_from_config(config, section, prop_name):
         try:
             return config.get(section, prop_name)
         except NoSectionError:
@@ -139,9 +140,3 @@ class ScriptSettings:
           Replaces placeholder for env and project that were possibly set in config files.
         """
         return prop_value.replace("${env}", self.env).replace("${project}", self.project)
-
-    def get_sanity_test_timeout_sec(self):
-        """
-          How much time do sanity tests wait for the application response until they consider that the app didn't start
-        """
-        self.sanity_test_timeout_sec

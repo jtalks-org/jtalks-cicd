@@ -13,43 +13,39 @@ class Tomcat:
 
     logger = Logger("Tomcat")
 
-    def __init__(self, backuper, script_settings):
-        self.backuper = backuper
-        self.script_settings = script_settings
-
-    def deploy_war(self):
+    def __init__(self, tomcat_location):
         """
-        Stops the Tomcat server, backups all necessary application data, copies
-        new application data to Tomcat directories
+        :param str tomcat_location: location of the tomcat root dir
         """
-        self.logger.info("Deploying {0} to {1}", self.script_settings.project,
-                         self.script_settings.get_tomcat_location())
-        self.stop()
-        self.backuper.backup()
-        self.move_war_to_webapps()
-        self.put_configs_to_conf()
-        self.start()
+        self.tomcat_location = tomcat_location
 
     def stop(self):
         """
         Stops the Tomcat server if it is running
         """
-        stop_command = "pkill -9 -f {0}".format(self.script_settings.get_tomcat_location())
-        self.logger.info("Killing tomcat [{0}]", stop_command)
-        # dunno why but retcode always equals to SIGNAL (-9 in this case), didn't figure out how to
-        #d istinguish errors from this
-        retcode = subprocess.call([stop_command], shell=True, stdout=PIPE, stderr=PIPE)
+        stop_command = 'pkill -9 -f {0}'.format(self.tomcat_location)
+        self.logger.info('Killing tomcat [{0}]', stop_command)
+        # dunno why but return code always equals to SIGNAL (-9 in this case), didn't figure out how to
+        # distinguish errors from this
+        subprocess.call([stop_command], shell=True, stdout=PIPE, stderr=PIPE)
 
-    def move_war_to_webapps(self):
+    def move_to_webapps(self, src_filepath, appname):
         """
-        Moves application war-file to 'webapps' Tomcat subfolder
+        Moves application war-file to 'webapps' Tomcat sub-folder
+        :param str src_filepath: to get artifact from
+        :param str appname: the name of the webapp to be deployed
         """
-        final_app_location = self.get_web_apps_location() + "/" + self.script_settings.get_app_final_name()
-        self.remove_previous_app(final_app_location)
-        self.logger.info("Putting new war file to Tomcat: [{0}]", final_app_location)
-        shutil.move(self.script_settings.project + ".war", final_app_location + ".war")
+        final_app_location = os.path.join(self.get_web_apps_location(), appname)
+        self.logger.info('Putting new war file to Tomcat: [{0}]', final_app_location)
+        if not os.path.exists(self.get_web_apps_location()):
+            self.logger.error('Tomcat webapps folder was not found in [{0}], configuration must have been wrong. '
+                              'Please configure correct Tomcat location.', self.tomcat_location)
+            raise TomcatNotFoundException
+        self._remove_previous_app(final_app_location)
+        shutil.move(src_filepath, final_app_location + '.war')
+        return final_app_location + '.war'
 
-    def remove_previous_app(self, app_location):
+    def _remove_previous_app(self, app_location):
         if os.path.exists(app_location):
             self.logger.info("Removing previous app: [{0}]", app_location)
             shutil.rmtree(app_location)
@@ -61,26 +57,22 @@ class Tomcat:
             self.logger.info("Removing previous war file: [{0}]", war_location)
             os.remove(war_location)
 
-    def get_config_file_location(self):
-        return os.path.join(self.script_settings.get_env_configs_dir(), self.script_settings.env,
-                            self.get_config_name())
-
-    def put_configs_to_conf(self):
+    def cp_app_descriptor_to_conf(self, descriptor_filepath, appname):
         """
-        Copies configuration files for application and ehcache to Tomcat directories
+        Copies configuration files (usually for application and ehcache) to Tomcat directories
+        :param str descriptor_filepath: location of the app deployment descriptor (with JNDI vars, names, etc).
+                By default it's located in `tomcat/conf/Catalina/localhost`
         """
-        if not os.path.exists(self.get_config_folder_location()):
-            os.makedirs(self.get_config_folder_location())
-        final_conf_location = self.get_config_folder_location() + "/" + self.script_settings.get_app_final_name() + ".xml"
-        conf_file_location = self.get_config_file_location()
-        ehcache_config_file_location = os.path.join(self.script_settings.get_env_configs_dir(),
-                                                    self.script_settings.env,
-                                                    self.get_ehcache_config_name())
-
-        self.logger.info("Putting [{0}] into [{1}]", conf_file_location, final_conf_location)
-        shutil.copyfile(conf_file_location, final_conf_location)
-        if os.path.exists(ehcache_config_file_location):
-            shutil.copy(ehcache_config_file_location, self.script_settings.get_tomcat_location() + "/conf")
+        if not os.path.exists(descriptor_filepath):
+            self.logger.error('Could not find app descriptor file [{0}] to put to tomcat conf', descriptor_filepath)
+            raise FileNotFoundException
+        dst_conf_dir = os.path.join(self.tomcat_location, 'conf', 'Catalina', 'localhost')
+        if not os.path.exists(dst_conf_dir):
+            self.logger.info('Conf dir [{0}] did not exist, creating..', dst_conf_dir)
+            os.makedirs(dst_conf_dir)
+        dst_conf_location = os.path.join(dst_conf_dir, appname + '.xml')
+        self.logger.info("Putting [{0}] into [{1}]", descriptor_filepath, dst_conf_location)
+        shutil.copyfile(descriptor_filepath, dst_conf_location)
 
     def start(self):
         """
@@ -102,14 +94,16 @@ class Tomcat:
         """
         return self.script_settings.project + ".xml"
 
-    def get_config_folder_location(self):
-        """
-        Returns configuration folder for Tomcat
-        """
-        return os.path.join(self.script_settings.get_tomcat_location(), "conf", "Catalina", "localhost")
-
     def get_web_apps_location(self):
         """
         Returns path to web applications directory of Tomcat
         """
-        return self.script_settings.get_tomcat_location() + "/webapps"
+        return self.tomcat_location + "/webapps"
+
+
+class TomcatNotFoundException(Exception):
+    pass
+
+
+class FileNotFoundException(Exception):
+    pass

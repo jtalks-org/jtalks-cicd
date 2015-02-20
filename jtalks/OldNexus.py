@@ -44,6 +44,7 @@ class Nexus:
         war_url = self.get_war_url(project, self.build_number)
         self.logger.info("Downloading artifact: [{0}]", war_url)
         urllib.urlretrieve(war_url, project + ".war")
+        return project + '.war'
 
     def get_war_url(self, project, build_number):
         group_id = "deployment-pipeline/"
