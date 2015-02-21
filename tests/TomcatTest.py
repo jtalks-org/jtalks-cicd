@@ -35,10 +35,22 @@ class TomcatTest(unittest.TestCase):
         self.assertRaises(TomcatNotFoundException, tomcat.move_to_webapps, 'src_filepath', 'appname')
 
     def test_cp_app_descriptor_raises_if_src_config_does_not_exist(self):
-        self.assertRaises(FileNotFoundException, Tomcat('').cp_app_descriptor_to_conf, 'does-not-exist.xml')
+        self.assertRaises(FileNotFoundException, Tomcat('').cp_app_descriptor_to_conf, 'does-not-exist.xml', 'appname')
 
     def test_cp_app_descriptor_must_result_in_new_file(self):
         tmpfile = file('tomcat-test.xml', 'w')
         Tomcat('').cp_app_descriptor_to_conf(tmpfile.name, 'appname')
         self.assertTrue(os.path.exists('conf/Catalina/localhost/appname.xml'))
         os.remove(tmpfile.name)
+        shutil.rmtree('conf')
+
+    def test_cp_configs_to_conf_should_raise_if_dst_conf_does_not_exist(self):
+        tmpfiles = (file('tomcat-config.xml', 'w'), file('tomcat-config2.xml', 'w'))
+        os.mkdir('conf')
+        Tomcat('').cp_configs_to_conf((tmpfiles[0].name, tmpfiles[1].name))
+        self.assertTrue(os.path.exists('conf/' + tmpfiles[0].name))
+        self.assertTrue(os.path.exists('conf/' + tmpfiles[1].name))
+        shutil.rmtree('conf')
+        os.remove(tmpfiles[0].name)
+        os.remove(tmpfiles[1].name)
+

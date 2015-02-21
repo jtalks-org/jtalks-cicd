@@ -59,9 +59,8 @@ class Tomcat:
 
     def cp_app_descriptor_to_conf(self, descriptor_filepath, appname):
         """
-        Copies configuration files (usually for application and ehcache) to Tomcat directories
+        Copies app descriptor to Tomcat dir, by default it's located in `tomcat/conf/Catalina/localhost`
         :param str descriptor_filepath: location of the app deployment descriptor (with JNDI vars, names, etc).
-                By default it's located in `tomcat/conf/Catalina/localhost`
         """
         if not os.path.exists(descriptor_filepath):
             self.logger.error('Could not find app descriptor file [{0}] to put to tomcat conf', descriptor_filepath)
@@ -74,6 +73,25 @@ class Tomcat:
         self.logger.info("Putting [{0}] into [{1}]", descriptor_filepath, dst_conf_location)
         shutil.copyfile(descriptor_filepath, dst_conf_location)
 
+    def cp_configs_to_conf(self, src_filepaths):
+        """
+        Copies configuration files (usually for application and ehcache) to Tomcat directories
+        :param list of [str] src_filepaths: location of the app deployment descriptor (with JNDI vars, names, etc).
+                By default it's located in `tomcat/conf/Catalina/localhost`
+        """
+        for src_filepath in src_filepaths:
+            if not os.path.exists(src_filepath):
+                self.logger.error('Could not find app config file [{0}] to put to tomcat conf', src_filepath)
+                raise FileNotFoundException
+        dst_conf_dir = os.path.join(self.tomcat_location, 'conf')
+        if not os.path.exists(dst_conf_dir):
+            self.logger.info('Conf dir [{0}] did not exist, seems like an correct tomcat location was set. Quitting.',
+                             dst_conf_dir)
+            raise FileNotFoundException
+        for src_filepath in src_filepaths:
+            self.logger.info("Putting [{0}] into [{1}]", src_filepath, dst_conf_dir)
+            shutil.copy(src_filepath, dst_conf_dir)
+
     def start(self):
         """
         Starts the Tomcat server
@@ -81,12 +99,6 @@ class Tomcat:
         startup_file = self.script_settings.get_tomcat_location() + "/bin/startup.sh"
         self.logger.info("Starting Tomcat [{0}]", startup_file)
         subprocess.call(startup_file, shell=True, stdout=PIPE, stderr=PIPE)
-
-    def get_ehcache_config_name(self):
-        """
-        Returns name of the Ehcache configuration file
-        """
-        return self.script_settings.project + ".ehcache.xml"
 
     def get_config_name(self):
         """
