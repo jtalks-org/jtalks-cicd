@@ -7,27 +7,29 @@ from jtalks.util.Logger import Logger
 
 
 class Tomcat:
-    """
-    Class for deploying and backing up Tomcat applications
-    """
+    """ Class for deploying and backing up Tomcat applications """
 
     logger = Logger("Tomcat")
 
     def __init__(self, tomcat_location):
-        """
-        :param str tomcat_location: location of the tomcat root dir
-        """
+        """ :param str tomcat_location: location of the tomcat root dir """
         self.tomcat_location = tomcat_location
 
     def stop(self):
-        """
-        Stops the Tomcat server if it is running
-        """
-        stop_command = 'pkill -9 -f {0}'.format(self.tomcat_location)
+        """ Stops the Tomcat server if it is running """
+        stop_command = 'pkill -9 -f {0}'.format(os.path.abspath(self.tomcat_location))
         self.logger.info('Killing tomcat [{0}]', stop_command)
         # dunno why but return code always equals to SIGNAL (-9 in this case), didn't figure out how to
         # distinguish errors from this
         subprocess.call([stop_command], shell=True, stdout=PIPE, stderr=PIPE)
+
+    def start(self):
+        """ Starts the Tomcat server """
+        startup_file = self.tomcat_location + "/bin/startup.sh"
+        self.logger.info("Starting Tomcat [{0}]", startup_file)
+        return_code = subprocess.call(['/bin/bash', startup_file], shell=False, stdout=PIPE, stderr=PIPE)
+        if return_code != 0:
+            self.logger.error('Could not start Tomcat, return code: {0}', return_code)
 
     def move_to_webapps(self, src_filepath, appname):
         """
@@ -35,9 +37,10 @@ class Tomcat:
         :param str src_filepath: to get artifact from
         :param str appname: the name of the webapp to be deployed
         """
-        final_app_location = os.path.join(self.get_web_apps_location(), appname)
+        webapps_location = os.path.join(self.tomcat_location, 'webapps')
+        final_app_location = os.path.join(webapps_location, appname)
         self.logger.info('Putting new war file to Tomcat: [{0}]', final_app_location)
-        if not os.path.exists(self.get_web_apps_location()):
+        if not os.path.exists(webapps_location):
             self.logger.error('Tomcat webapps folder was not found in [{0}], configuration must have been wrong. '
                               'Please configure correct Tomcat location.', self.tomcat_location)
             raise TomcatNotFoundException
@@ -91,26 +94,6 @@ class Tomcat:
         for src_filepath in src_filepaths:
             self.logger.info("Putting [{0}] into [{1}]", src_filepath, dst_conf_dir)
             shutil.copy(src_filepath, dst_conf_dir)
-
-    def start(self):
-        """
-        Starts the Tomcat server
-        """
-        startup_file = self.script_settings.get_tomcat_location() + "/bin/startup.sh"
-        self.logger.info("Starting Tomcat [{0}]", startup_file)
-        subprocess.call(startup_file, shell=True, stdout=PIPE, stderr=PIPE)
-
-    def get_config_name(self):
-        """
-        Returns name of the Tomcat configuration file
-        """
-        return self.script_settings.project + ".xml"
-
-    def get_web_apps_location(self):
-        """
-        Returns path to web applications directory of Tomcat
-        """
-        return self.tomcat_location + "/webapps"
 
 
 class TomcatNotFoundException(Exception):

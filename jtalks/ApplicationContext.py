@@ -40,7 +40,7 @@ class ApplicationContext:
         return NewNexus.JtalksArtifacts()
 
     def tomcat(self):
-        return Tomcat(backuper=self.backuper(), script_settings=self.script_settings)
+        return Tomcat(self.script_settings.get_tomcat_location())
 
     def backuper(self):
         return Backuper(self.script_settings.get_backup_folder(), self.script_settings, self.db_operations())

@@ -19,5 +19,3 @@ class ApplicationContextTest(unittest.TestCase):
         tomcat = self.sut.tomcat()
         # can't use assertIsInstance() because on CentOS we use old mock lib
         self.assertTrue(isinstance(tomcat, Tomcat))
-        self.assertTrue(isinstance(tomcat.script_settings, ScriptSettings))
-        self.assertTrue(isinstance(tomcat.backuper, Backuper))
