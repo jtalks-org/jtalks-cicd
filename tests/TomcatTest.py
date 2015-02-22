@@ -56,4 +56,3 @@ class TomcatTest(unittest.TestCase):
         file('test_tomcat/bin/startup.sh', 'w').write('echo test > test_tomcat/test; sleep 5 &')
         Tomcat('test_tomcat').start()
         self.assertEqual('test\n', file('test_tomcat/test').readline())
-

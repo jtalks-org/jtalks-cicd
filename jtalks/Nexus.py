@@ -106,7 +106,7 @@ class NexusPageWithVersions(sgmllib.SGMLParser):
                 version = match.group(2)
                 if '.{0}.'.format(build_number) in version:
                     return version
-        raise Exception(
+        raise BuildNotFoundException(
             "Couldn't find a build number {0}. Here are all the links: {1}".format(build_number, self.hyperlinks))
 
 

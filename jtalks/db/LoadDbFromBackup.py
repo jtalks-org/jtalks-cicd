@@ -1,5 +1,10 @@
 class LoadDbFromBackup:
     def __init__(self, db, ssh):
+        """
+        :param jtalks.DB.DB db: db operations
+        @param ssh:
+        @return:
+        """
         self.db = db
         self.ssh = ssh
 

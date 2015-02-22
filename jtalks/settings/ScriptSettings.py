@@ -140,3 +140,19 @@ class ScriptSettings:
           Replaces placeholder for env and project that were possibly set in config files.
         """
         return prop_value.replace("${env}", self.env).replace("${project}", self.project)
+
+
+class AppConfigs:
+    def __init__(self, configs_dir):
+        self.script_work_dir = configs_dir
+
+    def get_app_descriptor_path(self, appname):
+        return os.path.join(self.script_work_dir, appname + '.xml')
+
+    def get_app_config_paths(self, appname):
+        config_files = []
+        for filename in os.listdir(self.script_work_dir):
+            abs_path = os.path.join(self.script_work_dir, filename)
+            if os.path.isfile(abs_path) and filename != appname + '.xml' and filename.startswith(appname):
+                config_files.append(abs_path)
+        return config_files

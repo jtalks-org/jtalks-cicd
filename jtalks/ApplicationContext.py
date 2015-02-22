@@ -2,6 +2,7 @@ import os
 from jtalks.DeployCommand import DeployCommand
 from jtalks.OldNexus import Nexus as OldNexus
 import jtalks.Nexus as NewNexus
+from jtalks.DB import DB
 from jtalks.SSH import SSH
 from jtalks.Tomcat import Tomcat
 from jtalks.backup.Backuper import Backuper
@@ -75,7 +76,7 @@ class ApplicationContext:
         return SSH(self.script_settings)
 
     def db(self):
-        return DbOperations(self.script_settings.env, self.script_settings)
+        return DB(self.script_settings())
 
     def script_settings(self):
         return self.script_settings

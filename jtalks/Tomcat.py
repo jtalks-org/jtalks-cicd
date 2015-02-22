@@ -14,6 +14,7 @@ class Tomcat:
     def __init__(self, tomcat_location):
         """ :param str tomcat_location: location of the tomcat root dir """
         self.tomcat_location = tomcat_location
+        self.logger.info('Tomcat location: [{0}]', tomcat_location)
 
     def stop(self):
         """ Stops the Tomcat server if it is running """
@@ -27,9 +28,14 @@ class Tomcat:
         """ Starts the Tomcat server """
         startup_file = self.tomcat_location + "/bin/startup.sh"
         self.logger.info("Starting Tomcat [{0}]", startup_file)
-        return_code = subprocess.call(['/bin/bash', startup_file], shell=False, stdout=PIPE, stderr=PIPE)
-        if return_code != 0:
-            self.logger.error('Could not start Tomcat, return code: {0}', return_code)
+        pipe = subprocess.Popen(['/bin/bash', startup_file], shell=False, stdout=PIPE, stderr=PIPE)
+        out, err = pipe.communicate()
+        if pipe.returncode != 0:
+            error = 'Could not start Tomcat, return code: {0}'.format(pipe.returncode)
+            self.logger.error(error)
+            self.logger.error(out)
+            self.logger.error(err)
+            raise CouldNotStartTomcatException(error)
 
     def move_to_webapps(self, src_filepath, appname):
         """
@@ -41,9 +47,11 @@ class Tomcat:
         final_app_location = os.path.join(webapps_location, appname)
         self.logger.info('Putting new war file to Tomcat: [{0}]', final_app_location)
         if not os.path.exists(webapps_location):
-            self.logger.error('Tomcat webapps folder was not found in [{0}], configuration must have been wrong. '
-                              'Please configure correct Tomcat location.', self.tomcat_location)
-            raise TomcatNotFoundException
+            error = 'Tomcat webapps folder was not found in [{0}], configuration must have been wrong. ' \
+                    'Please configure correct Tomcat location. Current location contains: {1}' \
+                .format(self.tomcat_location, os.listdir(self.tomcat_location))
+            self.logger.error(error)
+            raise TomcatNotFoundException(error)
         self._remove_previous_app(final_app_location)
         shutil.move(src_filepath, final_app_location + '.war')
         return final_app_location + '.war'
@@ -101,4 +109,8 @@ class TomcatNotFoundException(Exception):
 
 
 class FileNotFoundException(Exception):
+    pass
+
+
+class CouldNotStartTomcatException(Exception):
     pass

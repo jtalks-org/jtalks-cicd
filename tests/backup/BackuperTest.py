@@ -1,30 +1,30 @@
+import os
+from os import path
 import unittest
-
-from mock import patch, MagicMock
-
 from datetime import datetime
+import shutil
+
 from jtalks.backup.Backuper import Backuper
-from jtalks.settings.ScriptSettings import ScriptSettings
 
 
 class BackuperTest(unittest.TestCase):
-    def test_constructor_throws_if_folder_not_finished_with_slash(self):
-        self.assertRaises(ValueError, Backuper, "folder", None, self.db_operations)
+    def setUp(self):
+        os.mkdir('backup')
+        os.mkdir('to_backup')
 
-    @patch('os.makedirs')
-    def test_backup_creates_folder_to_keep_backups(self, makedirs_method):
-        self.sut.backup()
-        now = datetime.now().strftime("%Y_%m_%dT%H_%M_%S")
-        folder_to_create = "/tmp/system-test/project1/{0}".format(now)  # Couldn't find a way to mock date
-        makedirs_method.assert_called_with(folder_to_create)
+    def tearDown(self):
+        shutil.rmtree('backup')
+        shutil.rmtree('to_backup')
 
-    def test_get_project_backup_folder(self):
-        self.assertEqual("/tmp/system-test/project1", self.sut.get_project_backup_folder())
+    def test_backup_creates_folder_to_keep_backups(self):
+        Backuper('./backup/', None)
+        self.assertTrue(path.exists('backup/' + self.get_now_formatted_as_backup()))
 
-    @patch('os.listdir')
-    def test_get_list_of_backups(self, list_dir_method):
-        list_dir_method.return_value = ["1", "2"]
-        self.assertEqual(["1", "2"], self.sut.get_list_of_backups())
+    def test_backup_folder_actually_backs_up(self):
+        os.mkdir('to_backup/test')
+        backuper = Backuper('./backup/', None)
+        Backuper('./backup/', None).back_up_dir('./to_backup')
+        self.assertTrue(path.exists(path.join(backuper.backup_folder, 'to_backup/test')))
 
-    db_operations = MagicMock()
-    sut = Backuper("/tmp/", ScriptSettings(None, "project1", "system-test"), db_operations)
+    def get_now_formatted_as_backup(self):
+        return datetime.now().strftime("%Y_%m_%dT%H_%M_%S")
