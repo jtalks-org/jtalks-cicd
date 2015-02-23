@@ -3,6 +3,7 @@ import datetime
 
 import requests
 from requests.exceptions import ConnectionError
+
 from jtalks.sanity.SanityCheckFailedException import SanityCheckFailedException
 from jtalks.util.Logger import Logger
 
@@ -54,7 +55,7 @@ class SanityTest:
             else:
                 self.logger.info("Error response, got {0} HTTP status. App server might still be booting.",
                                  response.status_code)
-        if response.status_code not in [200, 201]:
+        if not response or response.status_code not in [200, 201]:
             self.logger.error('After {0} no successful response was received from the app. Finishing by timeout {1}',
                               attempt_counter, self.sanity_test_timeout_sec)
             self.logger.error("Last time while accessing main page, app answered with error: [{0} {1} {2}]",

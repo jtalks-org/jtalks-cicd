@@ -14,7 +14,7 @@ class Tomcat:
     def __init__(self, tomcat_location):
         """ :param str tomcat_location: location of the tomcat root dir """
         self.tomcat_location = tomcat_location
-        if self.tomcat_location or os.path.exists(tomcat_location):
+        if self.tomcat_location and os.path.exists(tomcat_location):
             self.logger.info('Tomcat location: [{0}]', tomcat_location)
         else:
             self.logger.warn('Tomcat location was not set or it does not exist: [{0}]', tomcat_location)

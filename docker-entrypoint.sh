@@ -6,7 +6,7 @@ python setup.py install
 echo '=============================================='
 echo '========Running Unit & Component Tests========'
 echo '=============================================='
-setup.py test
+python setup.py test
 component_tests_result=$?
 echo '=============================================='
 echo '=============Running System Tests============='
