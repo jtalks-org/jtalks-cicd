@@ -50,6 +50,9 @@ class ScriptSettings:
             self.logger.info("Creating directory [{0}]", directory)
             os.makedirs(directory)
 
+    def get_tomcat_port(self):
+        return self.props.get('tomcat_port', None)
+
     def get_tomcat_location(self):
         """ Gets value of the tomcat home from [project].cfg file related to particular env and project """
         return self.props.get('tomcat_location', '')

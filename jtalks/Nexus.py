@@ -38,13 +38,23 @@ class JtalksArtifacts:
         return gav, tofile_path
 
     def deploy_plugins(self, to_dir, plugin_files=[]):
-        if not to_dir and len(plugin_files) > 0:
-            self.logger.warn('Plugin dir was not specified in env configs while there are plugins specified '
-                             'to be deployed: [{0}]. Skipping plugin deployment', ','.join(plugin_files))
+        """
+        Puts plugins to the config to the specified folder on the FS. Cleans previous plugins of there are any.
+        :param str to_dir: directory to put the plugins to. Will be created if it's absent.
+        :param [str] plugin_files: file names to put to the target dir
+        """
+        if not to_dir:
+            if len(plugin_files) > 0:
+                self.logger.warn('Plugin dir was not specified in env configs while there are plugins specified '
+                                 'to be deployed: [{0}]. Skipping plugin deployment', ','.join(plugin_files))
             return
+
         if not os.path.exists(to_dir):
             self.logger.info('Plugin dir did not exist, creating: [{0}]', to_dir)
             os.makedirs(to_dir)
+        for filename in os.listdir(to_dir):  # rm previous plugins
+            if filename.endswith('.jar'):
+                os.remove(os.path.join(to_dir, filename))
         for plugin in plugin_files:
             shutil.move(plugin, to_dir)
 

@@ -4,6 +4,8 @@ MAINTAINER Stanislav Bashkyrtsev <stanislav.bashkirtsev@gmail.com>
 ENV PYTHONUNBUFFERED 1
 ENV DEBIAN_FRONTEND noninteractive
 
+EXPOSE 8080
+
 RUN apt-get -qy install software-properties-common \
  && add-apt-repository ppa:fkrull/deadsnakes \
  # && add-apt-repository  ppa:apt-fast/stable \

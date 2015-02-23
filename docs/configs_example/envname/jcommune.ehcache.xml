@@ -4,7 +4,7 @@
     <diskStore path="java.io.tmpdir"/>
 
     <cacheManagerPeerProviderFactory class="net.sf.ehcache.distribution.jgroups.JGroupsCacheManagerPeerProviderFactory"
-                                     properties="connect=UDP(mcast_addr=235.0.0.1;mcast_port=45559;):PING:
+                                     properties="connect=UDP(mcast_addr=235.0.0.1;mcast_port=${app_ehcache_port};):PING:
                     MERGE2:FD_SOCK:VERIFY_SUSPECT:pbcast.NAKACK:UNICAST:pbcast.STABLE:
                     FRAG:pbcast.GMS" propertySeparator="::"/>
 
