@@ -49,6 +49,11 @@ class DeployCommandTest(unittest.TestCase):
         ).deploy(scriptsettings.project, scriptsettings.build,
                  scriptsettings.get_app_final_name(), scriptsettings.get_plugins())
 
+    def _scriptsettings(self, build, project='jcommune'):
+        return ScriptSettings(Values({'env': 'system-test', 'project': project, 'build': build,
+                                      'grab_envs': 'false', 'sanity_test_timeout_sec': 120}),
+                              workdir='tests/.jtalks')
+
     def _read_log_if_available(self, log_file):
         if os.path.exists(log_file):
             print('Reading log file [{0}]'.format(log_file))
@@ -57,10 +62,3 @@ class DeployCommandTest(unittest.TestCase):
                 print(line)
         else:
             print('Log file {0} was not created, not logs to show'.format(log_file))
-
-    def _scriptsettings(self, build, project='jcommune'):
-        return ScriptSettings(Values({'env': 'system-test', 'project': project, 'build': build,
-                                                'grab_envs': 'false', 'sanity_test_timeout_sec': 120}))
-
-    def test_deployment_results_in_configured_appname_instead_of_artifact_name(self):
-        pass

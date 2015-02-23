@@ -1,3 +1,4 @@
+# used only for purposes of testing, if you need to play around, use Dockerfile in docs dir
 FROM jtalks/base
 MAINTAINER Stanislav Bashkyrtsev <stanislav.bashkirtsev@gmail.com>
 

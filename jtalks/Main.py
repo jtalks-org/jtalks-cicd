@@ -18,18 +18,16 @@ class Main:
         if command == 'version':
             print __version__
             exit(0)
-        ScriptSettings(options, args)
-        app_context = ApplicationContext(options.env, options.project, options.build, options.grab_envs,
-                                         os.path.expanduser("~/.jtalks"), options.sanity_test_timeout_sec,
-                                         version=__version__)
-        script_settings = app_context.script_settings
+        script_settings = ScriptSettings(options)
+        app_context = ApplicationContext(script_settings)
         if script_settings.grab_envs == "true":
             app_context.environment_config_grabber().grab_jtalks_configs()
         try:
             if command == 'deploy':
                 LibVersion().log_lib_versions()
-                app_context.deploy_command().deploy(options.project, options.build,
-                                                    script_settings.get_app_final_name(), options.plugins)
+                app_context.deploy_command().deploy(script_settings.project, script_settings.build,
+                                                    script_settings.get_app_final_name(),
+                                                    script_settings.get_plugins())
             elif command == "upload-to-nexus":
                 LibVersion().log_lib_versions()
                 app_context.old_nexus().upload_war('pom.xml')

@@ -46,8 +46,8 @@ class SanityTest:
             try:
                 response = requests.get(request_address, timeout=self.sanity_test_timeout_sec)
             except ConnectionError:
-                self.logger.info("Sleeping for 1 sec..")
-                sleep(1)  # so that we don't connect too often
+                self.logger.info("Sleeping for 5 sec..")
+                sleep(5)  # so that we don't connect too often
                 continue
             if response.status_code in [200, 201]:
                 break

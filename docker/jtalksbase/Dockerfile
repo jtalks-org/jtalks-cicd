@@ -19,6 +19,7 @@ RUN apt-get -qy install software-properties-common \
 RUN useradd -d /home/jtalks -M -N -g nogroup -r jtalks  \
  && mkdir ~jtalks \
  && echo 'jtalks ALL = NOPASSWD: ALL' >> /etc/sudoers
+ && ln -sf /usr/bin/python2.6 /usr/bin/python
 RUN chown -R jtalks ~jtalks
 
 USER jtalks

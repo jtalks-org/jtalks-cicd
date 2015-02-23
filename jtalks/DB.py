@@ -1,6 +1,7 @@
 import os
+
 import MySQLdb
-import ConfigParser
+
 from jtalks.util.Logger import Logger
 
 
@@ -24,19 +25,16 @@ class DB:
     poulpeAdminPass = None
     logger = Logger("DB")
 
-    def __init__(self, script_settings):
-        self.env = script_settings.env
-        self.config = ConfigParser.ConfigParser()
-        self.config.read(script_settings.get_env_configs_dir() + self.env + "/db.cfg")
-        self.dbHost = self.config.get('db', 'host')
-        self.dbUser = self.config.get('db', 'user')
-        self.dbPass = self.config.get('db', 'pass')
-        self.dbName = self.config.get('db', 'name')
-        self.jcName = self.config.get('properties', 'jc_name')
-        self.jcDescription = self.config.get('properties', 'jc_description')
-        self.jcUrl = self.config.get('properties', 'jc_url')
-        self.jcNotify = self.config.get('properties', 'jc_notify')
-        self.poulpeAdminPass = self.config.get('properties', 'poulpe_admin_pass')
+    def __init__(self, dbsettings, scriptsettings):
+        self.dbHost = dbsettings.host
+        self.dbUser = dbsettings.user
+        self.dbPass = dbsettings.password
+        self.dbName = dbsettings.name
+        self.jcName = scriptsettings.props('forum_name')
+        self.jcDescription = scriptsettings.props('forum_description')
+        self.jcUrl = scriptsettings.props('forum_url')
+        self.jcNotify = scriptsettings.props('forum_notify')
+        self.poulpeAdminPass = scriptsettings.props('forum_poulpe_admin_pass')
 
     def connect_to_database(self):
         """

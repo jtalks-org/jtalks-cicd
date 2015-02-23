@@ -1,5 +1,7 @@
 JTalks Continuous Integration & Continuous Delivery scripts
 
+----
+
 Scripts to deploy JTalks projects like JCommune, Antarcticle, Poulpe.
 
 The best way to try it out is to use [Docker](https://www.docker.com/) that installs java, mysql, tomcat. 

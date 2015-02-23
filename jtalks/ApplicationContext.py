@@ -1,5 +1,3 @@
-import os
-
 from jtalks.DeployCommand import DeployCommand
 from jtalks.OldNexus import Nexus as OldNexus
 import jtalks.Nexus as NewNexus
@@ -9,7 +7,6 @@ from jtalks.Tomcat import Tomcat
 from jtalks.backup.Backuper import Backuper
 from jtalks.db.DbOperations import DbOperations
 from jtalks.db.LoadDbFromBackup import LoadDbFromBackup
-from jtalks.parser.TomcatServerXml import TomcatServerXml
 from jtalks.sanity.SanityTest import SanityTest
 from jtalks.util.EnvList import EnvList
 from jtalks.util.EnvironmentConfigGrabber import EnvironmentConfigGrabber
@@ -40,24 +37,23 @@ class ApplicationContext:
         return Backuper(self.script_settings.backups_dir, self.db_operations())
 
     def db_operations(self):
-        return DbOperations(self.script_settings.env, self.db_settings())
+        return DbOperations(self.script_settings.get_db_settings())
 
     def db_settings(self):
         return self.script_settings.get_db_settings()
 
     def deploy_command(self):
-        return DeployCommand(self)
+        return DeployCommand(
+            self.jtalks_artifacts(), self.old_nexus(), self.tomcat(), self.sanity_test(),
+            self.backuper(), self.script_settings)
 
     def environment_config_grabber(self):
-        return EnvironmentConfigGrabber(self.script_settings.get_env_configs_dir(), self.script_settings.temp_dir)
+        return EnvironmentConfigGrabber(self.script_settings.global_configs_dir, self.script_settings.temp_dir)
 
     def sanity_test(self):
-        http_port = self.tomcat_server_xml().http_port()
+        http_port = self.script_settings.get_tomcat_port()
         return SanityTest(tomcat_port=http_port, app_name=self.script_settings.get_app_final_name(),
                           sanity_test_timeout_sec=self.script_settings.sanity_test_timeout_sec)
-
-    def tomcat_server_xml(self):
-        return TomcatServerXml.fromfile(self.script_settings.get_tomcat_location() + "/conf/server.xml")
 
     def load_db_from_backup(self):
         return LoadDbFromBackup(self.db(), self.ssh())
@@ -66,13 +62,10 @@ class ApplicationContext:
         return SSH(self.script_settings)
 
     def db(self):
-        return DB(self.script_settings())
+        return DB(self.script_settings)
 
     def script_settings(self):
         return self.script_settings
 
     def env_list(self):
-        return EnvList(script_settings=self.script_settings)
-
-    def __project_config_file_location__(self, env, project):
-        return os.path.join(self.script_settings.get_env_configs_dir(), env, project + ".xml")
+        return EnvList(self.script_settings.global_configs_dir)

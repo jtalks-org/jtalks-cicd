@@ -99,7 +99,8 @@ class ScriptSettingsTest(unittest.TestCase):
         self.assertRaises(RequiredPropertyNotFoundException, self.sut().get_db_settings)
 
     def write_global_config(self, text):
-        file(join(self.tmp_dir, ScriptSettings.GLOBAL_ENV_CONFIG_FILE_NAME), 'w').write(text)
+        file(join(self.tmp_dir, ScriptSettings.ENVS_DIR_NAME, ScriptSettings.GLOBAL_ENV_CONFIG_FILE_NAME), 'w')\
+            .write(text)
 
     def write_env_config(self, text, env='env'):
         env_dir = join(self.tmp_dir, ScriptSettings.ENVS_DIR_NAME, env)

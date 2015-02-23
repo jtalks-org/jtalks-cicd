@@ -28,7 +28,7 @@ class ScriptSettings:
         self.global_configs_dir = os.path.join(self.work_dir, self.ENVS_DIR_NAME)
         self.env_configs_dir = os.path.join(self.global_configs_dir, self.env)
 
-        self.global_config_path = os.path.join(self.work_dir, self.GLOBAL_ENV_CONFIG_FILE_NAME)
+        self.global_config_path = os.path.join(self.global_configs_dir, self.GLOBAL_ENV_CONFIG_FILE_NAME)
         self.env_config_path = os.path.join(self.env_configs_dir, self.ENV_CONFIG_FILE_NAME)
         self.project_config_path = os.path.join(self.env_configs_dir, self.project + '.cfg')
 
@@ -51,15 +51,15 @@ class ScriptSettings:
             os.makedirs(directory)
 
     def get_tomcat_port(self):
-        return self.props.get('tomcat_port', None)
+        return int(self.props.get('tomcat_http_port', 0))
 
     def get_tomcat_location(self):
         """ Gets value of the tomcat home from [project].cfg file related to particular env and project """
-        return self.props.get('tomcat_location', '')
+        return self.props.get('tomcat_location', None)
 
     def get_app_final_name(self):
         """ Gets the name of the application to be deployed (even if it's Poulpe, it can be deployed as ROOT.war). """
-        return self.props['app_final_name']
+        return self.props.get('app_final_name', self.project)
 
     def get_plugins(self):
         if 'app_plugins' in self.props and self.props['app_plugins']:
@@ -114,11 +114,17 @@ class ScriptSettings:
         Reads props from global, env and project configs, then returns them as map with `section_option=value`.
         Values may contain placeholders referencing other options and special options like `${project}` & `${env}`
         """
-        self.logger.info('Reading settings from: '
-                         + ', '.join((self.global_config_path, self.env_config_path, self.project_config_path)))
+        configs = [os.path.abspath(self.global_config_path), os.path.abspath(self.env_config_path),
+                   os.path.abspath(self.project_config_path)]
         props = {}
         config = ConfigParser()
-        config.read((self.global_config_path, self.env_config_path, self.project_config_path))
+        for config_file in configs:
+            abs_path = os.path.abspath(config_file)
+            if os.path.exists(abs_path):
+                self.logger.info('Reading config file [{0}]', abs_path)
+                config.read(abs_path)
+            else:
+                self.logger.info('Could not read config file as it does not exist: [{0}]', abs_path)
         for section in config.sections():
             for option in config.options(section):
                 props[section + '_' + option] = config.get(section, option)
@@ -127,13 +133,16 @@ class ScriptSettings:
             with_replaced_placeholders[key] = self._resolve_placeholder(props, props[key])
         return with_replaced_placeholders
 
-    def _resolve_placeholder(self, props, value):
+    def _resolve_placeholder(self, props, value, n_of_trial=0):
+        if n_of_trial > 10:
+            self.logger.warn('Could not resolve all placeholders in property value: {0}. Leaving it as is.', value)
+            return value
         value = value.replace("${env}", self.env).replace("${project}", self.project)
         if value.find('${') != -1:
             for key in props.keys():
                 value = value.replace('${' + key + '}', props[key])
         if value.find('${') != -1:
-            value = self._resolve_placeholder(props, value)
+            value = self._resolve_placeholder(props, value, n_of_trial+1)
         return value
 
 
@@ -153,8 +162,8 @@ class DbSettings:
         for propname in DbSettings.REQUIRED_PROPS:
             if propname not in props.keys():
                 raise RequiredPropertyNotFoundException(
-                    'Property {0} was not found. All these properties are required: {1}',
-                    propname + ', '.join(DbSettings.REQUIRED_PROPS))
+                    'Property {0} was not found. All these properties are required: {1}'.format(
+                        propname, ', '.join(DbSettings.REQUIRED_PROPS)))
         port = 3306
         password = ''
         if 'app_db_port' in props:

@@ -14,10 +14,15 @@ class Tomcat:
     def __init__(self, tomcat_location):
         """ :param str tomcat_location: location of the tomcat root dir """
         self.tomcat_location = tomcat_location
-        self.logger.info('Tomcat location: [{0}]', tomcat_location)
+        if self.tomcat_location or os.path.exists(tomcat_location):
+            self.logger.info('Tomcat location: [{0}]', tomcat_location)
+        else:
+            self.logger.warn('Tomcat location was not set or it does not exist: [{0}]', tomcat_location)
 
     def stop(self):
         """ Stops the Tomcat server if it is running """
+        if not os.path.exists(self.tomcat_location):
+            raise TomcatNotFoundException('Could not found tomcat: [{0}]'.format(self.tomcat_location))
         stop_command = 'pkill -9 -f {0}'.format(os.path.abspath(self.tomcat_location))
         self.logger.info('Killing tomcat [{0}]', stop_command)
         # dunno why but return code always equals to SIGNAL (-9 in this case), didn't figure out how to
@@ -26,6 +31,8 @@ class Tomcat:
 
     def start(self):
         """ Starts the Tomcat server """
+        if not os.path.exists(self.tomcat_location):
+            raise TomcatNotFoundException('Could not found tomcat: [{0}]'.format(self.tomcat_location))
         startup_file = self.tomcat_location + "/bin/startup.sh"
         self.logger.info("Starting Tomcat [{0}]", startup_file)
         pipe = subprocess.Popen(['/bin/bash', startup_file], shell=False, stdout=PIPE, stderr=PIPE)
