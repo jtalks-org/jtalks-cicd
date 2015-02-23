@@ -1,18 +1,15 @@
 #!/usr/bin/env python
 from optparse import OptionParser
-import os
 import sys
-import traceback
 
-from jtalks.ApplicationContext import ApplicationContext
-from jtalks.util.LibVersion import LibVersion
+from jtalks.Main import Main
 from jtalks.util.Logger import Logger
-from jtalks import __version__
 
 
 """
   This script downloads the artifact from Nexus (only project name and build number is enough because it's unique)
-  and deploys the artifact to the Tomcat.
+  and deploys the artifact to the Tomcat. It expects the configuration of the app being placed into
+  `~/.jtalks/environments`.
 
   Run: python [scriptname].py -h to get list of options.
 """
@@ -22,35 +19,7 @@ logger = Logger("entry-point")
 def main():
     (options, args) = get_project_and_build_from_arguments()
     logger.info("Script Params: {0}", options)
-    command = args[0]
-    if command == 'version':
-        print __version__
-        exit(0)
-    app_context = ApplicationContext(options.env, options.project, options.build, options.grab_envs,
-                                     os.path.expanduser("~/.jtalks"), options.sanity_test_timeout_sec,
-                                     version=__version__)
-    if app_context.script_settings.grab_envs == "true":
-        app_context.environment_config_grabber().grab_jtalks_configs()
-    try:
-        if command == "deploy":
-            LibVersion().log_lib_versions()
-            app_context.deploy_command().deploy()
-        elif command == "upload-to-nexus":
-            LibVersion().log_lib_versions()
-            app_context.old_nexus().upload_war("pom.xml")
-        elif command == "list-envs":
-            app_context.env_list().list_envs()
-        elif command == "load-db-from-backup":
-            LibVersion().log_lib_versions()
-            app_context.load_db_from_backup().load()
-        else:
-            logger.error("Command was not recognized, you can use: [deploy], [upload-to-nexus]")
-            raise RuntimeError
-    except Exception:
-        logger.error("Program finished with errors")
-        if options.debug:
-            print("Root cause: %s" % traceback.format_exc())
-        sys.exit(1)
+    Main().main(args, options)
 
 
 def get_project_and_build_from_arguments():
@@ -59,26 +28,24 @@ def get_project_and_build_from_arguments():
     If nothing was specified, None is returned.
     """
     parser = OptionParser()
-    parser.add_option("-b", "--build", dest="build",
-                      help="The build number of the Deployment Pipeline to deploy a unique artifact to Nexus.")
-    parser.add_option("-p", "--project", dest="project",
-                      help="Project name to be deployed to tomcat (e.g. jcommune, poulpe)")
-    parser.add_option("-e", "--environment", dest="env",
-                      help="Environment to be deployed. Environment MUST exist on current server. Run [list-envs] to "
-                           "see possible values")
-    parser.add_option('-g', "--grab-envs", dest="grab_envs", default="false",
-                      help='Whether or not to clone configs from JTalks Git repository, '
-                           'requires appropriate SSH access allowed. Possible values - true and false. False by default')
+    parser.add_option('-b', '--build', dest='build',
+                      help='The build number of the Deployment Pipeline to deploy a unique artifact to Nexus.')
+    parser.add_option('-p', "--project", dest="project",
+                      help='''Project name to be deployed to tomcat (e.g. jcommune, poulpe). Script looks up the app
+                      configs in `~/.jtalks/environments` by this name.''')
+    parser.add_option('-e', "--environment", dest="env",
+                      help='''Environment to be deployed. Environment MUST exist on current server. Run [list-envs] to
+                      see possible values''')
+    parser.add_option('-g', '--grab-envs', dest="grab_envs", default="false",
+                      help='''Whether or not to clone configs from JTalks Git repository,
+                      requires appropriate SSH access allowed. Possible values - true and false.
+                      False by default''')
     parser.add_option('-t', '--sanity-test-timeout-sec', dest='sanity_test_timeout_sec', default=120,
-                      help='After the app is deployed, scripts check whether it was deployed successfully by sending an '
-                           'HTTP request. This argument says for how long to wait before we consider the deployment failed.')
-    parser.add_option('-s', '--sanity-test-sleep-sec', dest='sanity_test_sleep_sec', default=30,
-                      help='The amount of time tests ignore error responses as deployment failure. This is needed because '
-                           'first tomcat may not start quickly and therefore the response Connection Refused will be '
-                           'immediate. Thus when we send requests, first we should treat error messages as possible '
-                           'responses. After this sleep time error responses are considered as failed deployment.')
-    parser.add_option("-d", "--debug", dest="debug", default="off",
-                      help="Whether to show additional errors and logs or not. Possible values: on/off.")
+                      help='''After the app is deployed, scripts check whether it was deployed successfully by sending
+                      an HTTP request. This argument says for how long to wait before we consider the
+                      deployment failed.''')
+    parser.add_option('-d', '--debug', dest='debug', default='off',
+                      help='Whether to show additional errors and logs or not. Possible values: on/off.')
     (options, args) = parser.parse_args()
     if len(args) == 0:
         logger.error("No command was specified, you can use: [deploy], [upload-to-nexus]")

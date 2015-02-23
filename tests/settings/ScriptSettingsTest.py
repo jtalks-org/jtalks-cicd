@@ -1,4 +1,6 @@
+from optparse import Values
 import os
+from os.path import join
 import unittest
 import shutil
 
@@ -6,23 +8,65 @@ from jtalks.settings.ScriptSettings import ScriptSettings, AppConfigs
 
 
 class ScriptSettingsTest(unittest.TestCase):
-    sut = ScriptSettings(100500, "project1", "system-test")
     tmp_dir = 'ScripSettingsTest-TmpDir'
 
     def setUp(self):
         os.mkdir(self.tmp_dir)
+        os.makedirs(join(self.tmp_dir, ScriptSettings.ENVS_DIR_NAME, 'env'))
+        os.mkdir(join(self.tmp_dir, ScriptSettings.TEMP_DIR_NAME))
+        os.mkdir(join(self.tmp_dir, ScriptSettings.BACKUPS_DIR_NAME))
 
     def tearDown(self):
         shutil.rmtree(self.tmp_dir)
 
-    def test_prop_is_overriden_by_project_configs(self):
-        self.assertEquals('location overriden by project config', self.sut.get_tomcat_location())
+    def test_global_prop_is_overriden_by_env_prop_which_is_overriden_by_project_prop(self):
+        self.write_global_config('[section]\nglobal=global\nenv=global\nproject=global')
+        self.write_env_config('[section]\nenv=env\nproject=env')
+        self.write_project_config('[section]\nproject=project')
+        self.assertEquals('global', self.sut().props['section_global'])
+        self.assertEquals('env', self.sut().props['section_env'])
+        self.assertEquals('project', self.sut().props['section_project'])
 
-    def test_prop_is_overriden_by_env_configs(self):
-        self.assertEquals('final_name overriden by env config', self.sut.get_app_final_name())
+    def test_props_with_special_symbols(self):
+        self.write_global_config('[sec-dash.dot]\nopt-dash.dot=val-dash.dot')
+        self.assertEqual('val-dash.dot', self.sut().props['sec-dash.dot_opt-dash.dot'])
 
-    def test_tomcat_port_is_taken_from_server_xml(self):
-        self.assertRaises(RuntimeError, self.sut.get_tomcat_port)
+    def test_placeholder_replaced(self):
+        self.write_global_config('[sec]\nopt1=${sec_opt2}\nopt2=${sec_opt3}\nopt3=value')
+        self.write_env_config('[sec1]\nproj=${project}\nenv=${env}\nopt3=value')
+        self.assertEqual('value', self.sut().props['sec_opt1'])
+        self.assertEqual('project', self.sut().props['sec1_proj'])
+        self.assertEqual('env', self.sut().props['sec1_env'])
+
+    def test_plugins_section_is_split_into_separate_plugins(self):
+        self.write_global_config('[app]\nplugins=plugin1,plugin-2,plugin 3')
+        self.assertEqual(['plugin1', 'plugin-2', 'plugin 3'], self.sut().get_plugins())
+
+        self.write_global_config('[app]\nplugins=')
+        self.assertEqual(0, len(self.sut().get_plugins()))
+
+        self.write_global_config('[app]\n')
+        self.assertEqual(0, len(self.sut().get_plugins()))
+
+    def test_settings_file_mapping(self):
+        self.write_global_config('[project-files]\nfile1=/file1\nfile-2=/file2\nfile 3=${project}.xml')
+        mapping = self.sut().get_app_file_mapping()
+        self.assertEqual('/file1', mapping['file1'])
+        self.assertEqual('/file2', mapping['file-2'])
+        self.assertEqual('project.xml', mapping['file 3'])
+
+    def test_files_are_deployed(self):
+        sut = self.sut()
+        file(join(sut.global_configs_dir, 'global-file.xml'), 'w').write('Hello, ${project}')
+        file(join(sut.global_configs_dir, 'env-file.properties'), 'w').write('This must be overriden by env file')
+        file(join(sut.env_configs_dir, 'env-file.properties'), 'w').write('Hello, ${env}')
+        self.write_global_config('[tmp]\ndir=' + self.tmp_dir +
+                                 '\n[app-files]'
+                                 '\nglobal-file.xml=${tmp_dir}/file.xml'
+                                 '\nenv-file.properties=${tmp_dir}/creates_folder/file.properties')
+        self.sut().deploy_configs()
+        self.assertEqual('Hello, project', file(join(self.tmp_dir, 'file.xml')).readline())
+        self.assertEqual('Hello, env', file(join(self.tmp_dir, 'creates_folder', 'file.properties')).readline())
 
     def test_app_config_deployment_descriptor(self):
         project_file = os.path.join(self.tmp_dir, 'project.xml')
@@ -39,3 +83,27 @@ class ScriptSettingsTest(unittest.TestCase):
         file(project_files[0], 'w'), file(project_files[1], 'w')
         self.assertEqual(1, len(AppConfigs(self.tmp_dir).get_app_config_paths('project')))
         self.assertEqual(project_files[1], AppConfigs(self.tmp_dir).get_app_config_paths('project')[0])
+
+    def write_global_config(self, text):
+        file(join(self.tmp_dir, ScriptSettings.GLOBAL_ENV_CONFIG_FILE_NAME), 'w').write(text)
+
+    def write_env_config(self, text, env='env'):
+        env_dir = join(self.tmp_dir, ScriptSettings.ENVS_DIR_NAME, env)
+        if not os.path.exists(env_dir):
+            os.makedirs(env_dir)
+        file(join(env_dir, ScriptSettings.ENV_CONFIG_FILE_NAME), 'w').write(text)
+
+    def write_project_config(self, text, env='env', project='project'):
+        env_dir = join(self.tmp_dir, ScriptSettings.ENVS_DIR_NAME, env)
+        if not os.path.exists(env_dir):
+            os.makedirs(env_dir)
+        file(join(env_dir, project + '.cfg'), 'w').write(text)
+
+    def sut(self, options_as_dict={}):
+        """
+        :param dict options_as_dict: options to pass to script settings
+        :return: ScriptSettings
+        """
+        merged = dict(options_as_dict.items() + {'project': 'project', 'env': 'env', 'build': '0', 'grab_envs': 'false',
+                                                 'sanity_test_timeout_sec': 120}.items())
+        return ScriptSettings(Values(merged), workdir=self.tmp_dir)

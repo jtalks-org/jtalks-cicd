@@ -4,6 +4,7 @@ import traceback
 
 from ApplicationContext import ApplicationContext
 from jtalks import __version__
+from jtalks.settings.ScriptSettings import ScriptSettings
 from jtalks.util.Logger import Logger
 from util.LibVersion import LibVersion
 
@@ -17,6 +18,7 @@ class Main:
         if command == 'version':
             print __version__
             exit(0)
+        ScriptSettings(options, args)
         app_context = ApplicationContext(options.env, options.project, options.build, options.grab_envs,
                                          os.path.expanduser("~/.jtalks"), options.sanity_test_timeout_sec,
                                          version=__version__)
@@ -41,7 +43,7 @@ class Main:
                         'Also see jtalks -h'
                 self.logger.error(error)
                 raise RuntimeError(error)
-        except Exception:
+        except:
             self.logger.error("Program finished with errors")
             if options.debug:
                 print("Root cause: %s" % traceback.format_exc())

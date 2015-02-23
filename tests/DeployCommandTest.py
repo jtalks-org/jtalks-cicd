@@ -1,3 +1,4 @@
+from optparse import Values
 from os import path
 import unittest
 
@@ -8,11 +9,12 @@ from jtalks.DeployCommand import DeployCommand
 from jtalks.backup.Backuper import Backuper
 from jtalks.db.DbOperations import DbOperations
 from jtalks.sanity.SanityTest import SanityTest
-from jtalks.settings.ScriptSettings import AppConfigs
+from jtalks.settings.ScriptSettings import AppConfigs, ScriptSettings
 
 
 class DeployCommandTest(unittest.TestCase):
     def test_deployment_succeeds(self):
+        ScriptSettings(Values({'env': 'system-test', 'project': 'jcommune', 'build': 6}), workdir=)
         try:
             DeployCommand(
                 JtalksArtifacts(), Nexus(6), Tomcat(path.expanduser('~/tomcat')), SanityTest(8080, 'jcommune'),
