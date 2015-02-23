@@ -1,10 +1,17 @@
 import os
 from unittest import TestCase
+import shutil
 
 from jtalks.Nexus import Gav, Nexus, JtalksArtifacts, NexusPageWithVersions
 
 
 class NexusTest(TestCase):
+    def setUp(self):
+        os.makedirs('NexusTestDir')
+
+    def tearDown(self):
+        shutil.rmtree('NexusTestDir')
+
     def test_gav_to_str(self):
         self.assertEqual('g:a:v::jar', Gav('a', 'g', 'v').to_str())
         self.assertEqual('g:a:v:c:jar', Gav('a', 'g', 'v', 'c').to_str())
@@ -49,8 +56,18 @@ class NexusTest(TestCase):
         os.remove(filename)
 
     def test_download_jc_plugin(self):
-        gavs = JtalksArtifacts().download_plugins('jcommune', '3.0.6.8629f39', ['questions-n-answers-plugin'])
-        self.assertTrue(os.path.exists(gavs.values()[0]))
-        self.assertEqual(861914, os.stat(gavs.values()[0]).st_size)
-        for filename in gavs.values():
+        files = JtalksArtifacts().download_plugins('jcommune', '3.0.6.8629f39', ['questions-n-answers-plugin'])
+        self.assertTrue(os.path.exists(files[0]))
+        self.assertEqual(861914, os.stat(files[0]).st_size)
+        for filename in files:
             os.remove(filename)
+
+    def test_deploy_plugins(self):
+        os.mkdir('NexusTestDir/plugins')
+        file('NexusTestDir/plugin.jar', 'w')
+        JtalksArtifacts().deploy_plugins('NexusTestDir/plugins', ['NexusTestDir/plugin.jar'])
+
+    def test_deploy_plugins_must_create_target_dir_if_it_not_exists(self):
+        file('NexusTestDir/plugin.jar', 'w')
+        JtalksArtifacts().deploy_plugins('NexusTestDir/notexisting', ['NexusTestDir/plugin.jar'])
+        self.assertTrue(os.path.exists('NexusTestDir/notexisting/plugin.jar'))

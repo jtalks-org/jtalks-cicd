@@ -5,4 +5,5 @@
     <Environment name="JCOMMUNE_DB_PASSWORD" value="${app_db_password}" type="java.lang.String" />
     <Environment name="JCOMMUNE_DB_URL" type="java.lang.String"
                  value="jdbc:mysql://localhost/${app_db_name}?characterEncoding=UTF-8" />
+    <Environment name="JCOMMUNE_PLUGIN_FOLDER" value="${app_plugins_dir}" type="java.lang.String"/>
 </Context>

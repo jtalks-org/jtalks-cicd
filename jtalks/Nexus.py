@@ -1,16 +1,20 @@
+import os
 import re
 import urllib
 import sgmllib
+import shutil
 
 from jtalks.util.Logger import Logger
 
 
 class JtalksArtifacts:
+    logger = Logger('JtalksArtifacts')
+
     def __init__(self, repo='builds'):
         self.repo = repo
 
     def download_war(self, project, build):
-        gav = Gav(project + '-web-view', 'org.jtalks.jcommune', version='', extension='')
+        gav = Gav(project + '-web-view', 'org.jtalks.' + project, version='', extension='')
         nexus = Nexus()
         version_page_url = gav.to_url(nexus.nexus_url, self.repo)
         version = NexusPageWithVersions().parse(version_page_url).version(build)
@@ -20,18 +24,29 @@ class JtalksArtifacts:
         return gav, project + '.war'
 
     def download_plugins(self, project, version, artifact_ids=()):
-        """ -> {Gav: str} """
-        gavs = {}
+        """ -> [str] """
+        files = []
         for plugin in artifact_ids:
             gav, filename = self.download_plugin(project, version, plugin)
-            gavs[gav] = filename
-        return gavs
+            files.append(filename)
+        return files
 
     def download_plugin(self, project, version, artifact_id):
         gav = Gav(artifact_id, 'org.jtalks.' + project, version)
         tofile_path = artifact_id + '.' + gav.extension
         Nexus().download(self.repo, gav, tofile_path)
         return gav, tofile_path
+
+    def deploy_plugins(self, to_dir, plugin_files=[]):
+        if not to_dir and len(plugin_files) > 0:
+            self.logger.warn('Plugin dir was not specified in env configs while there are plugins specified '
+                             'to be deployed: [{0}]. Skipping plugin deployment', ','.join(plugin_files))
+            return
+        if not os.path.exists(to_dir):
+            self.logger.info('Plugin dir did not exist, creating: [{0}]', to_dir)
+            os.makedirs(to_dir)
+        for plugin in plugin_files:
+            shutil.move(plugin, to_dir)
 
 
 class Nexus:
@@ -115,5 +130,4 @@ class NexusPageWithVersions(sgmllib.SGMLParser):
 
 
 class BuildNotFoundException(Exception):
-    def __init__(self, *args, **kwargs):
-        super(*args, **kwargs)
+    pass

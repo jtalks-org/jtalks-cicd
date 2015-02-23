@@ -24,15 +24,17 @@ class DeployCommand:
 
     def deploy(self, project, build, app_final_name, plugins=[]):
         self.__validate_params_and_raise__(project, build)
+        plugin_files = []
         try:
             gav, filename = self.jtalks_artifacts.download_war(project, build)
-            self.jtalks_artifacts.download_plugins(project, gav.version, plugins)
+            plugin_files = self.jtalks_artifacts.download_plugins(project, gav.version, plugins)
         except BuildNotFoundException:
             filename = self.old_nexus.download_war(project)
         self.tomcat.stop()
         self.backuper.back_up_dir(self.tomcat.tomcat_location)
         self.backuper.back_up_db()
         self.tomcat.move_to_webapps(filename, app_final_name)
+        self.jtalks_artifacts.deploy_plugins(self.scriptsettings.get_plugins_dir(), plugin_files)
         self.scriptsettings.deploy_configs()
         self.tomcat.start()
         self.sanity_test.check_app_started_correctly()

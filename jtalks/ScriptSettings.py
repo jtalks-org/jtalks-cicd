@@ -62,7 +62,12 @@ class ScriptSettings:
         if 'app_plugins' in self.props and self.props['app_plugins']:
             return self.props['app_plugins'].split(',')
         else:
-            return ()
+            return []
+
+    def get_plugins_dir(self):
+        if 'app_plugins_dir' in self.props and self.props['app_plugins_dir']:
+            return self.props['app_plugins_dir']
+        return None
 
     def get_app_file_mapping(self):
         """
