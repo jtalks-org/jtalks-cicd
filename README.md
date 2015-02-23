@@ -1,11 +1,16 @@
 JTalks Continuous Integration & Continuous Delivery scripts
 
-The best way to try it out is to use [Dockerfile](docker/jtalksbase/Dockerfile) that installs java, mysql, tomcat. 
+Scripts to deploy JTalks projects like JCommune, Antarcticle, Poulpe.
+
+The best way to try it out is to use [Docker](https://www.docker.com/) that installs java, mysql, tomcat. 
 You'll need to install Docker, then run:
 * `docker build -t jtalks/base docker/jtalksbase` to build a docker image with soft like java/mysql/tomcat 
 * `docker build -t jtalks/cicd docs` to build a docker image with jtalks-cicd scripts on board
 * `docker run -i -t jtalks/cicd /bin/bash` to create a container and log in there
 * `jtalks deploy --environment envname --project jcommune|poulpe --build [one of http://ci.jtalks.org/job/JC-UnitTests/]` 
+
+On Macs and Windows additionally you'd need to install [boot2docker|http://boot2docker.io/] and it might be required to 
+forward ports: `ssh -L 127.0.0.1:8081:127.0.0.1:8080 -fN docker@[ip you get when run boot2docker ip]`
 
 ### Installation Guide
 This project contains JTalks Environment configuration like DEV, UAT, PROD. To use it you'll need python to be installed (was checked on 2.6.6) and:
@@ -20,8 +25,10 @@ This project contains JTalks Environment configuration like DEV, UAT, PROD. To u
 ### User Guide:
 * `jtalks --help` to get an idea of the parameters
 * `jtalks deploy --build 2600 --environment local --project jcommune` where:
- * 2600 - is the build number, should be taken from (deployment pipeline repo)[http://repo.jtalks.org/content/repositories/deployment-pipeline/deployment-pipeline/] depending on what version of the build you want to deploy
- * local - env name which means connection details, Tomcat location, etc. For each environment you'll need a folder in `~/.jtalks/environments`. You can have several environments that are using e.g. different databases on single machine.
+ * 2600 - is the build number, should be taken from [build job](http://ci.jtalks.org/job/JC-UnitTests/) depending on 
+   what version of the build you want to deploy
+ * local - env name which means connection details, Tomcat location, etc. For each environment you'll need a folder 
+   in `~/.jtalks/environments`. You can have several environments that are using e.g. different databases on single machine.
  * jcommune - is a project you want to deploy. It can be also - poulpe
 
 Examples of configuration files that are required for these scripts can be found in [Config Examples](docs/config_examples) dir along with docs.
