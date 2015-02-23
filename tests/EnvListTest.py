@@ -1,18 +1,26 @@
+import os
 import unittest
+import shutil
 
-from jtalks.settings.ScriptSettings import ScriptSettings
 from jtalks.util.EnvList import EnvList
 
 
 class EnvListTest(unittest.TestCase):
+    tmp_dir = 'EnvListTestResources'
+    global_config_dir = 'EnvListTestResources/environments'
+    env_dir = os.path.join(global_config_dir, 'env')
+
+    def setUp(self):
+        os.makedirs(self.env_dir)
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp_dir)
+
     def test_all_envs_are_listed(self):
-        # can't use assertIn() because in CentOS we have old mock lib
-        self.assertEqual(len(self.sut.get_list_of_envs()), 1)
-        self.assertTrue("system-test" in self.sut.get_list_of_envs())
+        self.assertEqual(len(EnvList(self.global_config_dir).get_list_of_envs()), 1)
+        self.assertEqual(['env'], EnvList(self.global_config_dir).get_list_of_envs())
 
     def test_list_projects_for_env(self):
-        projects = self.sut.list_projects("system-test")
-        self.assertEqual(len(projects), 2)
-        self.assertTrue("project1" in projects, "Actually contained:" + repr(projects))
-
-    sut = EnvList(ScriptSettings(None, None, None))
+        file(os.path.join(self.env_dir, 'project.cfg'), 'w')
+        projects = EnvList(self.global_config_dir).list_projects('env')
+        self.assertEqual(['project'], projects)

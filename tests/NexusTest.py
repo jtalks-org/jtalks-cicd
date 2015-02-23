@@ -49,7 +49,8 @@ class NexusTest(TestCase):
         os.remove(filename)
 
     def test_download_jc_plugin(self):
-        gav, filename = JtalksArtifacts().download_plugin('jcommune', '3.0.6.8629f39', 'questions-n-answers-plugin')
-        self.assertTrue(os.path.exists(filename))
-        self.assertEqual(861914, os.stat(filename).st_size)
-        os.remove(filename)
+        gavs = JtalksArtifacts().download_plugins('jcommune', '3.0.6.8629f39', ['questions-n-answers-plugin'])
+        self.assertTrue(os.path.exists(gavs.values()[0]))
+        self.assertEqual(861914, os.stat(gavs.values()[0]).st_size)
+        for filename in gavs.values():
+            os.remove(filename)

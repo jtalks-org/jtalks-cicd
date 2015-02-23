@@ -48,11 +48,11 @@ class ScriptSettings:
     def _create_dir_if_absent(self, directory):
         if not os.path.exists(directory):
             self.logger.info("Creating directory [{0}]", directory)
-            os.mkdir(directory)
+            os.makedirs(directory)
 
     def get_tomcat_location(self):
         """ Gets value of the tomcat home from [project].cfg file related to particular env and project """
-        return self.props['tomcat_location']
+        return self.props.get('tomcat_location', '')
 
     def get_app_final_name(self):
         """ Gets the name of the application to be deployed (even if it's Poulpe, it can be deployed as ROOT.war). """
@@ -62,12 +62,10 @@ class ScriptSettings:
         if 'app_plugins' in self.props and self.props['app_plugins']:
             return self.props['app_plugins'].split(',')
         else:
-            return []
+            return ()
 
     def get_app_file_mapping(self):
         """
-        :param str appname: name of the app to get the file mapping for (it has section in config file
-            `[appname-files]`)
         :return dict: mapping of the src file name (located either in environments/ or in environments/env folder)
             without folder part and the destination file path (where to put those files on the server)
         """
@@ -80,6 +78,10 @@ class ScriptSettings:
                 file_mapping[src_filename] = dst_filepath
         return file_mapping
 
+    def get_db_settings(self):
+        """ :return DbSettings: db settings """
+        return DbSettings.build(self.props)
+
     def deploy_configs(self):
         mapping = self.get_app_file_mapping()
         for key in mapping:
@@ -90,8 +92,9 @@ class ScriptSettings:
                 self.logger.info('File {0} did not exist, skipping its deployment', key)
                 continue
             dst_filepath = mapping[key]
-            self.logger.info('Putting a file to: {0}', dst_filepath)
+            self.logger.info('Putting file [{0}]', dst_filepath)
             if not os.path.exists(os.path.dirname(dst_filepath)):
+                self.logger.info('Creating dir [{0}] to place the file', os.path.dirname(dst_filepath))
                 os.makedirs(os.path.dirname(dst_filepath))
             dst_file = file(dst_filepath, 'w')
             for line in open(src_filepath).readlines():
@@ -103,6 +106,8 @@ class ScriptSettings:
         Reads props from global, env and project configs, then returns them as map with `section_option=value`.
         Values may contain placeholders referencing other options and special options like `${project}` & `${env}`
         """
+        self.logger.info('Reading settings from: '
+                         + ', '.join((self.global_config_path, self.env_config_path, self.project_config_path)))
         props = {}
         config = ConfigParser()
         config.read((self.global_config_path, self.env_config_path, self.project_config_path))
@@ -124,20 +129,32 @@ class ScriptSettings:
         return value
 
 
-class AppConfigs:
-    def __init__(self, configs_dir):
-        self.script_work_dir = configs_dir
+class DbSettings:
+    REQUIRED_PROPS = ['app_db_name', 'app_db_user', 'app_db_host']
 
-    def get_app_descriptor_path(self, appname):
-        return os.path.join(self.script_work_dir, appname + '.xml')
+    def __init__(self, host, name, user, password, port=3306):
+        self.password = password
+        self.user = user
+        self.port = port
+        self.name = name
+        self.host = host
 
-    def get_app_config_paths(self, appname):
-        config_files = []
-        for filename in os.listdir(self.script_work_dir):
-            abs_path = os.path.join(self.script_work_dir, filename)
-            if os.path.isfile(abs_path) and filename != appname + '.xml' and filename.startswith(appname):
-                config_files.append(abs_path)
-        return config_files
+    @staticmethod
+    def build(props):
+        """ :return DbSettings: db settings """
+        for propname in DbSettings.REQUIRED_PROPS:
+            if propname not in props.keys():
+                raise RequiredPropertyNotFoundException(
+                    'Property {0} was not found. All these properties are required: {1}',
+                    propname + ', '.join(DbSettings.REQUIRED_PROPS))
+        port = 3306
+        password = ''
+        if 'app_db_port' in props:
+            port = int(props['app_db_port'])
+        if 'app_db_password' in props:
+            password = props['app_db_password']
+        return DbSettings(props['app_db_host'], props['app_db_name'], props['app_db_user'], password, port)
 
-    def put_configs(self, env, project):
-        pass
+
+class RequiredPropertyNotFoundException(Exception):
+    pass

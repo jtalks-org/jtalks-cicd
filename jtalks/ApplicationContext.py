@@ -1,4 +1,5 @@
 import os
+
 from jtalks.DeployCommand import DeployCommand
 from jtalks.OldNexus import Nexus as OldNexus
 import jtalks.Nexus as NewNexus
@@ -7,11 +8,9 @@ from jtalks.SSH import SSH
 from jtalks.Tomcat import Tomcat
 from jtalks.backup.Backuper import Backuper
 from jtalks.db.DbOperations import DbOperations
-from jtalks.db.DbSettings import DbSettings
 from jtalks.db.LoadDbFromBackup import LoadDbFromBackup
 from jtalks.parser.TomcatServerXml import TomcatServerXml
 from jtalks.sanity.SanityTest import SanityTest
-from jtalks.settings.ScriptSettings import ScriptSettings
 from jtalks.util.EnvList import EnvList
 from jtalks.util.EnvironmentConfigGrabber import EnvironmentConfigGrabber
 
@@ -22,15 +21,9 @@ class ApplicationContext:
       are all constructed manually in Python code.
     """
 
-    def __init__(self, environment, project, build, grab_envs, work_dir=None, sanity_test_timeout_sec=120,
-                 version=None):
-        """
-        @param work_dir - needed if you'd like to override a default work dir where all files reside, see ScriptSettings
-                          for more details
-        """
-        self.script_settings = ScriptSettings(build=build, project=project, env=environment, grab_envs=grab_envs,
-                                              work_dir=work_dir, sanity_test_timeout_sec=sanity_test_timeout_sec,
-                                              package_version=version)
+    def __init__(self, script_settings):
+        """ :param jtalks.ScriptSettings.ScriptSettings script_settings: settings """
+        self.script_settings = script_settings
         self.script_settings.create_work_dir_if_absent()
         self.script_settings.log_settings()
 
@@ -44,16 +37,13 @@ class ApplicationContext:
         return Tomcat(self.script_settings.get_tomcat_location())
 
     def backuper(self):
-        return Backuper(self.script_settings.get_backup_folder(), self.script_settings, self.db_operations())
+        return Backuper(self.script_settings.backups_dir, self.db_operations())
 
     def db_operations(self):
         return DbOperations(self.script_settings.env, self.db_settings())
 
     def db_settings(self):
-        config_file_location = self.__project_config_file_location__(self.script_settings.env,
-                                                                     self.script_settings.project)
-        db_settings = DbSettings(project=self.script_settings.project, config_file_location=config_file_location)
-        return db_settings
+        return self.script_settings.get_db_settings()
 
     def deploy_command(self):
         return DeployCommand(self)

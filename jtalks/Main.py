@@ -4,7 +4,7 @@ import traceback
 
 from ApplicationContext import ApplicationContext
 from jtalks import __version__
-from jtalks.settings.ScriptSettings import ScriptSettings
+from jtalks.ScriptSettings import ScriptSettings
 from jtalks.util.Logger import Logger
 from util.LibVersion import LibVersion
 

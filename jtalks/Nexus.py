@@ -20,8 +20,12 @@ class JtalksArtifacts:
         return gav, project + '.war'
 
     def download_plugins(self, project, version, artifact_ids=()):
+        """ -> {Gav: str} """
+        gavs = {}
         for plugin in artifact_ids:
-            self.download_plugin(project, version, plugin)
+            gav, filename = self.download_plugin(project, version, plugin)
+            gavs[gav] = filename
+        return gavs
 
     def download_plugin(self, project, version, artifact_id):
         gav = Gav(artifact_id, 'org.jtalks.' + project, version)

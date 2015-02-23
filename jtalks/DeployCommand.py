@@ -8,7 +8,7 @@ class DeployCommand:
 
     def __init__(self, jtalks_artifacts, old_nexus, tomcat, sanity_test, backuper, scriptsettings):
         """
-        :param jtalks.settings.ScriptSettings.ScriptSettings scriptsettings: config files to be deployed along with the app
+        :param jtalks.ScriptSettings.ScriptSettings scriptsettings: config files to be deployed along with the app
         :param jtalks.Nexus.JtalksArtifacts jtalks_artifacts: downloads JTalks artifacts from Nexus
         :param jtalks.OldNexus.Nexus old_nexus: used to download artifacts if it's old and is kept in old repo
         :param jtalks.Tomcat.Tomcat tomcat: manages tomcat
@@ -22,7 +22,7 @@ class DeployCommand:
         self.old_nexus = old_nexus
         self.backuper = backuper
 
-    def deploy(self, project, build, plugins=()):
+    def deploy(self, project, build, app_final_name, plugins=[]):
         self.__validate_params_and_raise__(project, build)
         try:
             gav, filename = self.jtalks_artifacts.download_war(project, build)
@@ -32,7 +32,7 @@ class DeployCommand:
         self.tomcat.stop()
         self.backuper.back_up_dir(self.tomcat.tomcat_location)
         self.backuper.back_up_db()
-        self.tomcat.move_to_webapps(filename, self.scriptsettings.get_app_final_name())
+        self.tomcat.move_to_webapps(filename, app_final_name)
         self.scriptsettings.deploy_configs()
         self.tomcat.start()
         self.sanity_test.check_app_started_correctly()

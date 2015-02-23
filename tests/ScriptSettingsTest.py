@@ -4,7 +4,7 @@ from os.path import join
 import unittest
 import shutil
 
-from jtalks.settings.ScriptSettings import ScriptSettings, AppConfigs
+from jtalks.ScriptSettings import ScriptSettings, RequiredPropertyNotFoundException
 
 
 class ScriptSettingsTest(unittest.TestCase):
@@ -41,6 +41,11 @@ class ScriptSettingsTest(unittest.TestCase):
     def test_plugins_section_is_split_into_separate_plugins(self):
         self.write_global_config('[app]\nplugins=plugin1,plugin-2,plugin 3')
         self.assertEqual(['plugin1', 'plugin-2', 'plugin 3'], self.sut().get_plugins())
+        self.assertNotEqual(('plugin1', 'plugin-2', 'plugin 3'), self.sut().get_plugins())
+
+        self.write_global_config('[app]\nplugins=plugin1')
+        self.assertEqual(['plugin1'], self.sut().get_plugins())
+        self.assertNotEqual('plugin1', self.sut().get_plugins())
 
         self.write_global_config('[app]\nplugins=')
         self.assertEqual(0, len(self.sut().get_plugins()))
@@ -49,7 +54,7 @@ class ScriptSettingsTest(unittest.TestCase):
         self.assertEqual(0, len(self.sut().get_plugins()))
 
     def test_settings_file_mapping(self):
-        self.write_global_config('[project-files]\nfile1=/file1\nfile-2=/file2\nfile 3=${project}.xml')
+        self.write_global_config('[app-files]\nfile1=/file1\nfile-2=/file2\nfile 3=${project}.xml')
         mapping = self.sut().get_app_file_mapping()
         self.assertEqual('/file1', mapping['file1'])
         self.assertEqual('/file2', mapping['file-2'])
@@ -68,21 +73,30 @@ class ScriptSettingsTest(unittest.TestCase):
         self.assertEqual('Hello, project', file(join(self.tmp_dir, 'file.xml')).readline())
         self.assertEqual('Hello, env', file(join(self.tmp_dir, 'creates_folder', 'file.properties')).readline())
 
-    def test_app_config_deployment_descriptor(self):
-        project_file = os.path.join(self.tmp_dir, 'project.xml')
-        file(project_file, 'w')
-        self.assertEqual(project_file, AppConfigs(self.tmp_dir).get_app_descriptor_path('project'))
+    def test_get_db_settings(self):
+        self.write_env_config('[app]\ndb_user=u\ndb_password=pass\ndb_name=name\ndb_host=local\ndb_port=22')
+        db_settings = self.sut().get_db_settings()
+        self.assertEqual('u', db_settings.user)
+        self.assertEqual('pass', db_settings.password)
+        self.assertEqual('name', db_settings.name)
+        self.assertEqual('local', db_settings.host)
+        self.assertEqual(22, db_settings.port)
 
-    def test_app_config_does_not_include_app_descriptor_in_configs(self):
-        project_file = os.path.join(self.tmp_dir, 'project.xml')
-        file(project_file, 'w')
-        self.assertEqual(0, len(AppConfigs(self.tmp_dir).get_app_config_paths('project')))
+    def test_get_db_settings_for_optional_fields(self):
+        self.write_env_config('[app]\ndb_user=u\ndb_name=name\ndb_host=local')
+        db_settings = self.sut().get_db_settings()
+        self.assertEqual('', db_settings.password)
+        self.assertEqual(3306, db_settings.port)
 
-    def test_app_config_includes_project_configs_in_config_paths(self):
-        project_files = (os.path.join(self.tmp_dir, 'project.xml'), os.path.join(self.tmp_dir, 'project-conf.xml'))
-        file(project_files[0], 'w'), file(project_files[1], 'w')
-        self.assertEqual(1, len(AppConfigs(self.tmp_dir).get_app_config_paths('project')))
-        self.assertEqual(project_files[1], AppConfigs(self.tmp_dir).get_app_config_paths('project')[0])
+    def test_get_db_settings_if_required_fields_not_found(self):
+        self.write_env_config('[app]\ndb_user=u\ndb_name=name')
+        self.assertRaises(RequiredPropertyNotFoundException, self.sut().get_db_settings)
+
+        self.write_env_config('[app]\ndb_user=u\ndb_host=local')
+        self.assertRaises(RequiredPropertyNotFoundException, self.sut().get_db_settings)
+
+        self.write_env_config('[app]\ndb_name=name\ndb_host=local')
+        self.assertRaises(RequiredPropertyNotFoundException, self.sut().get_db_settings)
 
     def write_global_config(self, text):
         file(join(self.tmp_dir, ScriptSettings.GLOBAL_ENV_CONFIG_FILE_NAME), 'w').write(text)
