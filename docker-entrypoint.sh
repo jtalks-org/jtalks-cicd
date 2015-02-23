@@ -22,6 +22,9 @@ jc_system_test_result=$?
 jtalks deploy -e envname -p poulpe -b 344
 poulpe_system_test_result=$?
 
+jtalks deploy -e envname -p antarcticle -b 564
+antarcticle_system_test_result=$?
+
 if [ "$component_tests_result" != 0 ]; then
   echo '===Component/unit tests failed!==='
   exit 1000
@@ -30,5 +33,8 @@ elif [ "$jc_system_test_result" != 0 ]; then
   exit 1000
 elif [ "$poulpe_system_test_result" != 0 ]; then
   echo '===Poulpe Deployment failed in scope of System Testing==='
+  exit 1000
+elif [ "$antarcticle_system_test_result" != 0 ]; then
+  echo '===Antarcticle Deployment failed in scope of System Testing==='
   exit 1000
 fi
