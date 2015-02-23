@@ -68,41 +68,6 @@ class Tomcat:
             self.logger.info("Removing previous war file: [{0}]", war_location)
             os.remove(war_location)
 
-    def cp_app_descriptor_to_conf(self, descriptor_filepath, appname):
-        """
-        Copies app descriptor to Tomcat dir, by default it's located in `tomcat/conf/Catalina/localhost`
-        :param str descriptor_filepath: location of the app deployment descriptor (with JNDI vars, names, etc).
-        """
-        if not os.path.exists(descriptor_filepath):
-            self.logger.error('Could not find app descriptor file [{0}] to put to tomcat conf', descriptor_filepath)
-            raise FileNotFoundException
-        dst_conf_dir = os.path.join(self.tomcat_location, 'conf', 'Catalina', 'localhost')
-        if not os.path.exists(dst_conf_dir):
-            self.logger.info('Conf dir [{0}] did not exist, creating..', dst_conf_dir)
-            os.makedirs(dst_conf_dir)
-        dst_conf_location = os.path.join(dst_conf_dir, appname + '.xml')
-        self.logger.info("Putting [{0}] into [{1}]", descriptor_filepath, dst_conf_location)
-        shutil.copyfile(descriptor_filepath, dst_conf_location)
-
-    def cp_configs_to_conf(self, src_filepaths):
-        """
-        Copies configuration files (usually for application and ehcache) to Tomcat directories
-        :param list of [str] src_filepaths: location of the app deployment descriptor (with JNDI vars, names, etc).
-                By default it's located in `tomcat/conf/Catalina/localhost`
-        """
-        for src_filepath in src_filepaths:
-            if not os.path.exists(src_filepath):
-                self.logger.error('Could not find app config file [{0}] to put to tomcat conf', src_filepath)
-                raise FileNotFoundException
-        dst_conf_dir = os.path.join(self.tomcat_location, 'conf')
-        if not os.path.exists(dst_conf_dir):
-            self.logger.info('Conf dir [{0}] did not exist, seems like an correct tomcat location was set. Quitting.',
-                             dst_conf_dir)
-            raise FileNotFoundException
-        for src_filepath in src_filepaths:
-            self.logger.info("Putting [{0}] into [{1}]", src_filepath, dst_conf_dir)
-            shutil.copy(src_filepath, dst_conf_dir)
-
 
 class TomcatNotFoundException(Exception):
     pass
