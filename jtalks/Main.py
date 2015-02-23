@@ -22,6 +22,9 @@ class Main:
         app_context = ApplicationContext(script_settings)
         if script_settings.grab_envs == "true":
             app_context.environment_config_grabber().grab_jtalks_configs()
+            # recreating them after configs were updated
+            script_settings = ScriptSettings(options)
+            app_context = ApplicationContext(script_settings)
         try:
             if command == 'deploy':
                 LibVersion().log_lib_versions()
