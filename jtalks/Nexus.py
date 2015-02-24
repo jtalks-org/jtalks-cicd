@@ -54,7 +54,9 @@ class JtalksArtifacts:
             return
         for filename in os.listdir(to_dir):  # rm previous plugins
             if filename.endswith('.jar'):
-                os.remove(os.path.join(to_dir, filename))
+                plugin_path = os.path.join(to_dir, filename)
+                self.logger.info('Removing previous plugins: [{0}]', plugin_path)
+                os.remove(plugin_path)
         for plugin in plugin_files:
             shutil.move(plugin, to_dir)
 
