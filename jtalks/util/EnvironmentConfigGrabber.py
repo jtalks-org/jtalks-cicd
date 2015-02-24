@@ -42,7 +42,7 @@ class EnvironmentConfigGrabber:
         grabbed_dirs_and_files = os.listdir(self.grabbed_configs_location)
         for next_grabbed_file_or_dir in grabbed_dirs_and_files:
             destination_file = os.path.join(self.env_configs_root, next_grabbed_file_or_dir)
-            self.logger.info('Creating dir [{0}]', os.path.abspath(destination_file))
+            self.logger.info('Creating [{0}]', os.path.abspath(destination_file))
             if os.path.exists(destination_file):
                 self.__delete_file_or_dir__(destination_file)
             shutil.move(os.path.join(self.grabbed_configs_location, next_grabbed_file_or_dir), destination_file)
