@@ -49,7 +49,7 @@ class JtalksArtifacts:
                                  'to be deployed: [{0}]. Skipping plugin deployment', ','.join(plugin_files))
             return
 
-        if not os.path.exists(to_dir):
+        if not os.path.exists(to_dir) and len(plugin_files) > 0:
             self.logger.info('Plugin dir did not exist, creating: [{0}]', to_dir)
             os.makedirs(to_dir)
         for filename in os.listdir(to_dir):  # rm previous plugins
