@@ -58,7 +58,10 @@ class SanityTest:
         if not response or response.status_code not in [200, 201]:
             self.logger.error('After {0} no successful response was received from the app. Finishing by timeout {1}',
                               attempt_counter, self.sanity_test_timeout_sec)
-            self.logger.error("Last time while accessing main page, app answered with error: [{0} {1} {2}]",
-                              response.status_code, response.reason, response.text)
+            if response:
+                self.logger.error("Last time while accessing main page, app answered with error: [{0} {1} {2}]",
+                                  response.status_code, response.reason, response.text)
+            else:
+                self.logger.error("App Server did not even get up!")
             raise SanityCheckFailedException("Sanity check failed")
         self.logger.info("Sanity check passed: [{0} {1}]", response.status_code, response.reason)
