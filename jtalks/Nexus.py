@@ -43,22 +43,21 @@ class JtalksArtifacts:
         :param str to_dir: directory to put the plugins to. Will be created if it's absent.
         :param [str] plugin_files: file names to put to the target dir
         """
-        if to_dir and not os.path.exists(to_dir):  # need the folder to exist even if it's empty
-            self.logger.info('Plugin dir did not exist, creating: [{0}]', to_dir)
-            os.makedirs(to_dir)
-        if len(plugin_files) == 0:
-            return
-        if not to_dir:
+        if to_dir:
+            if not os.path.exists(to_dir):
+                self.logger.info('Plugin dir did not exist, creating: [{0}]', to_dir)
+                os.makedirs(to_dir)
+            for filename in os.listdir(to_dir):  # rm previous plugins
+                if filename.endswith('.jar'):
+                    plugin_path = os.path.join(to_dir, filename)
+                    self.logger.info('Removing previous plugins: [{0}]', plugin_path)
+                    os.remove(plugin_path)
+            for plugin in plugin_files:
+                shutil.move(plugin, to_dir)
+        elif len(plugin_files) != 0:
             self.logger.warn('Plugin dir was not specified in env configs while there are plugins specified '
                              'to be deployed: [{0}]. Skipping plugin deployment', ','.join(plugin_files))
             return
-        for filename in os.listdir(to_dir):  # rm previous plugins
-            if filename.endswith('.jar'):
-                plugin_path = os.path.join(to_dir, filename)
-                self.logger.info('Removing previous plugins: [{0}]', plugin_path)
-                os.remove(plugin_path)
-        for plugin in plugin_files:
-            shutil.move(plugin, to_dir)
 
 
 class Nexus:

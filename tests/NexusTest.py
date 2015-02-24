@@ -80,4 +80,4 @@ class NexusTest(TestCase):
     def test_deploy_plugins_must_clean_previous_plugins(self):
         file('NexusTestDir/plugin.jar', 'w')
         JtalksArtifacts().deploy_plugins('NexusTestDir', [])
-        self.assertFalse(os.path.exists('NexusTestDir/notexisting/plugin.jar'))
+        self.assertFalse(os.path.exists('NexusTestDir/plugin.jar'))
