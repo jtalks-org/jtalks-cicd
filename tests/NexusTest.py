@@ -71,3 +71,8 @@ class NexusTest(TestCase):
         file('NexusTestDir/plugin.jar', 'w')
         JtalksArtifacts().deploy_plugins('NexusTestDir/notexisting', ['NexusTestDir/plugin.jar'])
         self.assertTrue(os.path.exists('NexusTestDir/notexisting/plugin.jar'))
+
+    def test_deploy_plugins_must_not_create_target_dir_its_name_was_not_passed(self):
+        file('NexusTestDir/plugin.jar', 'w')
+        JtalksArtifacts().deploy_plugins(None, ['NexusTestDir/plugin.jar'])
+        self.assertTrue(not os.path.exists('NexusTestDir/None/plugin.jar'))
