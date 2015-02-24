@@ -43,13 +43,12 @@ class JtalksArtifacts:
         :param str to_dir: directory to put the plugins to. Will be created if it's absent.
         :param [str] plugin_files: file names to put to the target dir
         """
-        if not to_dir:
-            if len(plugin_files) > 0:
-                self.logger.warn('Plugin dir was not specified in env configs while there are plugins specified '
-                                 'to be deployed: [{0}]. Skipping plugin deployment', ','.join(plugin_files))
+        if len(plugin_files) == 0:
             return
-
-        if not os.path.exists(to_dir) and len(plugin_files) > 0:
+        if not to_dir:
+            self.logger.warn('Plugin dir was not specified in env configs while there are plugins specified '
+                             'to be deployed: [{0}]. Skipping plugin deployment', ','.join(plugin_files))
+        if not os.path.exists(to_dir):
             self.logger.info('Plugin dir did not exist, creating: [{0}]', to_dir)
             os.makedirs(to_dir)
         for filename in os.listdir(to_dir):  # rm previous plugins
