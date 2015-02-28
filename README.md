@@ -12,7 +12,7 @@ You'll need to install Docker, then run:
 * `jtalks deploy --environment envname --project jcommune|poulpe --build [one of http://ci.jtalks.org/job/JC-UnitTests/]` 
 
 On Macs and Windows additionally you'd need to install [boot2docker|http://boot2docker.io/] and it might be required to 
-forward ports: `ssh -L 127.0.0.1:8081:127.0.0.1:8080 -fN docker@[ip you get when run boot2docker ip]`
+forward ports: `ssh -L 127.0.0.1:8080:127.0.0.1:8080 -N docker@[ip you get when run boot2docker ip]`
 
 ### Installation Guide
 This project contains JTalks Environment configuration like DEV, UAT, PROD. To use it you'll need python to be installed (was checked on 2.6.6) and:
