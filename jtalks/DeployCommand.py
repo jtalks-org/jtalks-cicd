@@ -27,7 +27,8 @@ class DeployCommand:
         plugin_files = []
         try:
             gav, filename = self.jtalks_artifacts.download_war(project, build)
-            plugin_files = self.jtalks_artifacts.download_plugins(project, gav.version, plugins)
+            if project == 'jcommune':
+                plugin_files = self.jtalks_artifacts.download_plugins(project, gav.version, plugins)
         except BuildNotFoundException:
             filename = self.old_nexus.download_war(project)
         self.tomcat.stop()

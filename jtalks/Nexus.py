@@ -53,6 +53,7 @@ class JtalksArtifacts:
                     self.logger.info('Removing previous plugins: [{0}]', plugin_path)
                     os.remove(plugin_path)
             for plugin in plugin_files:
+                self.logger.info('Adding plugin [{0}] to [{1}]', plugin, to_dir)
                 shutil.move(plugin, to_dir)
         elif len(plugin_files) != 0:
             self.logger.warn('Plugin dir was not specified in env configs while there are plugins specified '
