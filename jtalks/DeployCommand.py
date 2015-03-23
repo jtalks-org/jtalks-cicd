@@ -29,6 +29,12 @@ class DeployCommand:
             gav, filename = self.jtalks_artifacts.download_war(project, build)
             plugin_files = self.jtalks_artifacts.download_plugins(project, gav.version, plugins)
         except BuildNotFoundException:
+            if project == 'jcommune' and len(plugins) != 0:
+                self.logger.warn('Looks like a pretty old build is requested, plugins will not be installed for it '
+                                 'even though they were requested - at those times we did not upload plugins to '
+                                 'binary storage so they are not saved. To get plugins you would either need to find'
+                                 ' a required revision and build them from source. Sorry for that. But hey, this is'
+                                 ' a very old build of JCommune, use a newer version!')
             filename = self.old_nexus.download_war(project)
         self.tomcat.stop()
         self.backuper.back_up_dir(self.tomcat.tomcat_location)
