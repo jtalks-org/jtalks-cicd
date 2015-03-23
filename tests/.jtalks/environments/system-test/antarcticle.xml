@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+    <Environment name="ANTARCTICLE_DB_USER" value="${app_db_user}" type="java.lang.String"/>
+    <Environment name="ANTARCTICLE_DB_PASSWORD" value="${app_db_password}" type="java.lang.String"/>
+    <Environment name="ANTARCTICLE_DB_URL" value="jdbc:mysql://localhost/${app_db_name}?characterEncoding=UTF-8" type="java.lang.String" />
+    <Environment name="ANTARCTICLE_DB_DRIVER" value="com.mysql.jdbc.Driver" type="java.lang.String" />
+</Context>

@@ -41,6 +41,20 @@ class DeployCommandTest(unittest.TestCase):
             self._read_log_if_available('/home/jtalks/tomcat/logs/catalina.out')
             raise
 
+    def test_deploy_plugins_must_not_clean_prev_plugins_if_not_jc_is_deployed(self):
+        jcsettings = self._scriptsettings(build=2789)
+        antsettings = self._scriptsettings(build=574, project='antarcticle')
+        try:
+            self._deploy(jcsettings)
+            self._deploy(antsettings)
+        except:
+            self._read_log_if_available('/home/jtalks/tomcat/logs/catalina.out')
+            self._read_log_if_available('/home/jtalks/tomcat/logs/jcommune.log')
+            raise
+        plugins = os.listdir('/home/jtalks/.jtalks/plugins/system-test')
+        self.assertNotEqual(0, len(plugins), 'Actual plugins: ' + ', '.join(plugins))
+        self.assertEqual(['questions-n-answers-plugin'], plugins)
+
     def _deploy(self, scriptsettings):
         DeployCommand(
             JtalksArtifacts(), Nexus(scriptsettings.build), Tomcat(path.expanduser('~/tomcat')),

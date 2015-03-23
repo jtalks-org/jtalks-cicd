@@ -2,6 +2,7 @@
 sudo service mysql start
 cd ~/jtalks-cicd
 python setup.py install
+export PYTHONUNBUFFERED=1
 
 echo '=============================================='
 echo '========Running Unit & Component Tests========'

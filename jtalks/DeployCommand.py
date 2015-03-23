@@ -27,15 +27,15 @@ class DeployCommand:
         plugin_files = []
         try:
             gav, filename = self.jtalks_artifacts.download_war(project, build)
-            if project == 'jcommune':
-                plugin_files = self.jtalks_artifacts.download_plugins(project, gav.version, plugins)
+            plugin_files = self.jtalks_artifacts.download_plugins(project, gav.version, plugins)
         except BuildNotFoundException:
             filename = self.old_nexus.download_war(project)
         self.tomcat.stop()
         self.backuper.back_up_dir(self.tomcat.tomcat_location)
         self.backuper.back_up_db()
         self.tomcat.move_to_webapps(filename, app_final_name)
-        self.jtalks_artifacts.deploy_plugins(self.scriptsettings.get_plugins_dir(), plugin_files)
+        if project == 'jcommune':
+            self.jtalks_artifacts.deploy_plugins(self.scriptsettings.get_plugins_dir(), plugin_files)
         self.scriptsettings.deploy_configs()
         self.tomcat.start()
         self.sanity_test.check_app_started_correctly()

@@ -12,11 +12,11 @@ class OldNexusTest(TestCase):
         self.assertEqual(nexus.get_war_url('jcommune', 2600), self.url('2.12.2600.e148537'))
 
     def test_download_war(self):
-        nexus = OldNexus.Nexus(build_number=2600)
-        nexus.download_war('jcommune')
-        self.assertTrue(os.path.exists('jcommune.war'))
-        self.assertEqual(os.stat('jcommune.war').st_size, 38954194)
-        os.remove('jcommune.war')
+        nexus = OldNexus.Nexus(build_number=344)
+        nexus.download_war('poulpe')
+        self.assertTrue(os.path.exists('poulpe.war'))
+        self.assertEqual(os.stat('poulpe.war').st_size, 29115524)
+        os.remove('poulpe.war')
 
     def url(self, version):
         return self.NEXUS_BASE_URL + '/jcommune/' + version + '/jcommune-' + version + '.war'
