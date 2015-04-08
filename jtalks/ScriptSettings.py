@@ -19,7 +19,7 @@ class ScriptSettings:
         self.build = options_passed_to_script.build
         self.project = options_passed_to_script.project
         self.grab_envs = options_passed_to_script.grab_envs
-        self.sanity_test_timeout_sec = options_passed_to_script.sanity_test_timeout_sec
+        self.sanity_test_timeout_sec = int(options_passed_to_script.sanity_test_timeout_sec)
         self.package_version = __version__
 
         self.work_dir = workdir

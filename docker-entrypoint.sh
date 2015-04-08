@@ -17,7 +17,7 @@ export PATH="$PATH:/home/jtalks/.local/bin"
 rm -rf ~/.jtalks
 cp -rv ~/jtalks-cicd/docs/configs_example ~/.jtalks
 
-jtalks deploy -e envname -p jcommune -b 6
+jtalks deploy -e envname -p jcommune -b 6 --sanity-test-timeout-sec=300
 jc_system_test_result=$?
 
 jtalks deploy -e envname -p poulpe -b 344
