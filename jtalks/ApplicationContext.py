@@ -62,7 +62,7 @@ class ApplicationContext:
         return SSH(self.script_settings)
 
     def db(self):
-        return DB(self.script_settings)
+        return DB(self.script_settings.get_db_settings(), self.script_settings)
 
     def script_settings(self):
         return self.script_settings
