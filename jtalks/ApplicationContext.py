@@ -2,11 +2,9 @@ from jtalks.DeployCommand import DeployCommand
 from jtalks.OldNexus import Nexus as OldNexus
 import jtalks.Nexus as NewNexus
 from jtalks.DB import DB
-from jtalks.SSH import SSH
 from jtalks.Tomcat import Tomcat
 from jtalks.backup.Backuper import Backuper
 from jtalks.db.DbOperations import DbOperations
-from jtalks.db.LoadDbFromBackup import LoadDbFromBackup
 from jtalks.sanity.SanityTest import SanityTest
 from jtalks.util.EnvList import EnvList
 from jtalks.util.EnvironmentConfigGrabber import EnvironmentConfigGrabber
@@ -54,12 +52,6 @@ class ApplicationContext:
         http_port = self.script_settings.get_tomcat_port()
         return SanityTest(tomcat_port=http_port, app_name=self.script_settings.get_app_final_name(),
                           sanity_test_timeout_sec=self.script_settings.sanity_test_timeout_sec)
-
-    def load_db_from_backup(self):
-        return LoadDbFromBackup(self.db(), self.ssh())
-
-    def ssh(self):
-        return SSH(self.script_settings)
 
     def db(self):
         return DB(self.script_settings.get_db_settings(), self.script_settings)
