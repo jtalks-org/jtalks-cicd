@@ -20,13 +20,13 @@ export PATH="$PATH:/home/jtalks/.local/bin"
 rm -rf ~/.jtalks
 cp -rv ~/jtalks-cicd/docs/configs_example ~/.jtalks
 
-jtalks deploy -e envname -p jcommune -b 6 --sanity-test-timeout-sec=300
+jtalks deploy -e dev -p jcommune -b 6 --sanity-test-timeout-sec=300
 jc_system_test_result=$?
 
-jtalks deploy -e envname -p poulpe -b 344
+jtalks deploy -e dev -p poulpe -b 344
 poulpe_system_test_result=$?
 
-jtalks deploy -e envname -p antarcticle -b 564
+jtalks deploy -e dev -p antarcticle -b 564
 antarcticle_system_test_result=$?
 
 if [ "$component_tests_result" != 0 ]; then

@@ -8,8 +8,9 @@ The best way to try it out is to use [Docker](https://www.docker.com/) that inst
 You'll need to install Docker, then run:
 * `docker build -t jtalks/base docker/jtalksbase` to build a docker image with soft like java/mysql/tomcat 
 * `docker build -t jtalks/cicd docs` to build a docker image with jtalks-cicd scripts on board
-* `docker run -i -t jtalks/cicd /bin/bash` to create a container and log in there
-* `jtalks deploy --environment envname --project jcommune|poulpe --build [one of http://ci.jtalks.org/job/JC-UnitTests/]` 
+* `docker run -i -p 8080:8080 -t jtalks/cicd /bin/bash` to create a container and log in there. It also exposes 8080 port where apps are going to listen
+* `sudo service mysql start` - start MySQL Server, you can log in there with user `root` and empty password
+* `jtalks deploy --environment dev --project jcommune|poulpe|antarcticle --build [one of http://ci.jtalks.org/job/JC-UnitTests/]`
 
 On Macs and Windows additionally you'd need to install [boot2docker|http://boot2docker.io/] and it might be required to 
 forward ports: `ssh -L 127.0.0.1:8080:127.0.0.1:8080 -N docker@[ip you get when run boot2docker ip]`
