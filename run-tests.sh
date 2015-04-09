@@ -19,4 +19,3 @@ if [ ! -z "$error" ]; then
 fi
 
 end=$(date +%s.%N)
-diff=$(echo "$end - $start" | bc) && echo "Script took $diff sec"
