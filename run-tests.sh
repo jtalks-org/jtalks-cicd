@@ -1,10 +1,11 @@
 #!/bin/sh
+set -xe
+
 start=$(date +%s.%N)
 
-jtalks_base=`docker images | grep 'jtalks/base'`
-if [ -z "$jtalks_base" ]; then
+$(docker images | grep 'jtalks/base') || \
   docker build --no-cache=true -t jtalks/base docker/jtalksbase || error='Error during base image building'
-fi
+
 docker build --no-cache=true -t jtalks/cicd-tests . || error='Error during image building'
 docker run --rm jtalks/cicd-tests || error='Error during container run'
 docker rmi jtalks/cicd-tests

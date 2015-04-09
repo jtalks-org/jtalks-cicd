@@ -1,7 +1,10 @@
 #!/bin/sh
+set -xe
+
 sudo service mysql start
 cd ~/jtalks-cicd
-python setup.py install
+echo "Installing dependencies to run tests"
+python setup.py install --user
 export PYTHONUNBUFFERED=1
 
 echo '=============================================='

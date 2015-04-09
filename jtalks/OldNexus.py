@@ -35,7 +35,7 @@ class Nexus:
         print maven_deploy_command
 
         return_code = os.system(maven_deploy_command)
-        if (return_code != 0):
+        if return_code != 0:
             self.logger.error("Maven returned error code: " + str(return_code))
             raise Exception("Maven returned error code: " + str(return_code))
 
@@ -55,7 +55,9 @@ class Nexus:
 
 
 class NexusPageWithVersions(sgmllib.SGMLParser):
-    hyperlinks = []
+    def __init__(self):
+        self.hyperlinks = []
+        sgmllib.SGMLParser.__init__(self)
 
     def parse(self, url_with_versions):
         feed = urllib.urlopen(url_with_versions)
