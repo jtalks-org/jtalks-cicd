@@ -8,7 +8,7 @@ $(docker images | grep 'jtalks/base') || \
 
 docker build --no-cache=true -t jtalks/cicd-tests . || error='Error during image building'
 docker run --rm jtalks/cicd-tests || error='Error during container run'
-docker rmi jtalks/cicd-tests
+docker rmi jtalks/cicd-tests || echo 'No previously created image, creating one.'
 if [[ "$1_" == '-cleanup_' ]]; then
   docker rmi jtalks/base
 fi

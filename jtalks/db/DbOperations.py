@@ -36,8 +36,9 @@ class DbOperations:
                          self.dbsettings.name, backup_path, self.dbsettings.user)
         dump_command = "mysqldump -u'{0}'".format(self.dbsettings.user)
         if self.dbsettings.password:
-            dump_command += "-p'{0}'".format(self.dbsettings.password)
-        dump_command += "'{0}' > '{1}/{0}.sql'".format(self.dbsettings.name, backup_path)
+            dump_command += " -p'{0}'".format(self.dbsettings.password)
+        dump_command += " '{0}' > '{1}/{0}.sql'".format(self.dbsettings.name, backup_path)
+        self.logger.info("Dumping DB: [{0}]", dump_command.replace(self.dbsettings.password, "***"))
         os.popen(dump_command.format(self.dbsettings.user, self.dbsettings.password,
                                      self.dbsettings.name, backup_path)).read()
         self.logger.info("Database backed up [{0}]".format(self.dbsettings.name))
