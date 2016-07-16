@@ -9,6 +9,7 @@ setup(name='jtalks-cicd',
       version=__version__,
       description='Installs JTalks apps like jcommune and poulpe configuring them. Usually used by CI to implement CD '
                   '(continuous delivery)',
+      license='MIT',
       author='Stanislav Bashkyrtsev',
       author_email='stanislav.bashkirtsev@gmail.com',
       url='http://github.com/jtalks-org/jtalks-cicd',
