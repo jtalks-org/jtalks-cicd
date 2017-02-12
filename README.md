@@ -19,7 +19,7 @@ forward ports: `ssh -L 127.0.0.1:8080:127.0.0.1:8080 -N docker@[ip you get when 
 This project contains JTalks Environment configuration like DEV, UAT, PROD. To use it you'll need python to be installed (was checked on 2.6.6) and:
 * `apt-get install python-dev libmysqlclient-dev`
 * `apt-get install python-pip; pip install -U pip` - python package manager to install other python-related packages
-* `pip install http://cdn.mysql.com/Downloads/Connector-Python/mysql-connector-python-2.0.3.zip` - this is a hack, 
+* `pip install https://dev.mysql.com/get/Downloads/Connector-Python/mysql-connector-python-2.0.3.zip` - this is a hack, 
   but it became impossible to specify the connector via distutils require_installs because it moved to an external 
   site and pip throws error because it doesn't trust to it. Note, that this freaking lib may be absent, so you may need 
   to figure out where to find the newer version.
